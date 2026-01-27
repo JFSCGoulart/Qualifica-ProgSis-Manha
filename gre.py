@@ -1,1 +1,1 @@
-print("gre.py")
+print(1+2)
