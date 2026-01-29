@@ -5,7 +5,7 @@
 #o Preencher lacunas
 #o Ordenar etapas
 #o Sequências lógicas -- E
-#o Correspondência (ligar colunas)
+#o Correspondência (ligar colunas) 
 #o Classificação (separar categorias)
 #o Escolha múltipla (várias corretas)
 #o Palavra embaralhada
