@@ -4,7 +4,7 @@
 #o Verdadeiro ou Falso
 #o Preencher lacunas
 #o Ordenar etapas
-#o Sequências lógicas
+#o Sequências lógicas -- E
 #o Correspondência (ligar colunas)
 #o Classificação (separar categorias)
 #o Escolha múltipla (várias corretas)
@@ -21,5 +21,9 @@ cursor=conexao.cursor()
 def multipla_escolha():
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, ))
+    opcoes=
+    resposta_correta=input()
+    dica=input("Digite a dica: ")
+    pontuacao=
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
     conexao.commit()
