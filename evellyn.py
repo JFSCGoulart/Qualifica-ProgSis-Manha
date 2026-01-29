@@ -81,3 +81,5 @@ def sequencia_logica(): # COLOCAR A TABELA 'opcoes'
     cursor.execute('''INSERT INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
     print("Atividade de Sequência Lógica adicionada com sucesso!")
     conexao.commit()
+def estrela():
+    pass
