@@ -51,7 +51,7 @@ def verdadeiro_falso(): #OK
 def preencher_lacunas(): #OK
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    resposta_correta=input("Digite a resposta correta: ").lower
+    resposta_correta=input("Digite a resposta correta: ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSERT INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
