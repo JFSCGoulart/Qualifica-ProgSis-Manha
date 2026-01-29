@@ -29,12 +29,17 @@
 #  def escolha_multipla():
     # id_curso=int(input("Digite o identificador (ID) do curso: "))
     #  questão=input("Digite o enunciado da atividade: ")
-    #  opcoes = input("Digite as opções (ex: A,B,C,D ) : ")
+    #  opcao_a = input("Digite a "A" opção : ")
+    #  opcao_b = input("Digite a "B" opção : ")
+    #  opcao_c = input("Digite a "C" opção : ")
+    #  opcao_d = input("Digite a "D" opção : ")
+    #  opcao_e = input("Digite a "E" opção : ")
     #  resposta_correta=input("Digite as alternativas certas (ex: A,C) : ")
     #  dica=input("Digite a dica: ")
     #  pontuacao= 1 
     #  cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
-    #  conexao.commit()
+    #  cursor.execute('''INSET INTO opcoes(acoes)) 
+    # conexao.commit()
 
 
 
@@ -55,12 +60,12 @@
 
 
 #o Mini-cenários com decisões
-def mini_cenarios():
-     id_curso=int(input("Digite o identificador (ID) do curso: "))
-     cenario=input("Digite o cénario : ")
-     decisoes = input("Digite as decisões que o aluno pode tomar : ")
-     resposta_correta=input("Digite a decisão certa : ")
-     dica=input("Digite a dica: ")
-     pontuacao = 1
-     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
-     conexao.commit()
+# def mini_cenarios():
+    #  id_curso=int(input("Digite o identificador (ID) do curso: "))
+    #  cenario=input("Digite o cénario : ")
+    #  decisoes = input("Digite as decisões que o aluno pode tomar : ")
+    #  resposta_correta=input("Digite a decisão certa : ")
+    #  dica=input("Digite a dica: ")
+    #  pontuacao = 1
+    #  cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
+    #  conexao.commit()
