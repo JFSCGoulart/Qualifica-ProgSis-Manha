@@ -1,2 +1,6 @@
+
 print("Rita de Cássia da Silva")
-print(1+2)
+
+print("Pedro Adauto")
+
+print("Samuel de oliveira Evangelista")
