@@ -21,4 +21,5 @@ cursor=conexao.cursor()
 def multipla_escolha():
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta) VALUES (?, ?, ?, ?)''', (id_curso, questão, ))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, ))
+    conexao.commit()
