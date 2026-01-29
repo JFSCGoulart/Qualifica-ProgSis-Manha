@@ -1,0 +1,57 @@
+# menu.py
+from usuarios import usuario, Loja
+
+# Listas para armazenar os objetos em memória
+lista_usuarios = []
+
+def cadastrar_usuario():
+    print("\n=== Cadastro de usuario ===")
+    nome = input("Nome: ")
+    endereco = input("Endereço: ")
+    telefone = input("Telefone: ")
+    cpf_cnpj = input("CPF: ")
+    email = input("Email: ")
+
+    novo_usuario = usuario(nome, endereco, telefone, cpf_cnpj, email)
+    lista_usuarios.append(novo_usuario)
+    print("usuario cadastrado com sucesso!")
+
+def visualizar():
+    print("\n=== Visualizar ===")
+    print("1. usuarios")
+    opcao_visualizar = input("Escolha uma opção: ")
+
+    if opcao_visualizar == '1':
+        if not lista_usuarios:
+            print("\nNenhum usuario cadastrado.")
+        else:
+            for usuario in lista_usuarios:
+                print(usuario)
+    else:
+        print("Opção inválida.")
+
+def executar_menu():
+    while True:
+        print("\n===== LOGIN =====")
+        print("1. Cadastrar")
+        print("2. Visualizar")
+        print("3. Sair")
+        
+        opcao = input("Escolha uma opção: ")
+
+        if opcao == '1':
+            # Submenu para escolher o que cadastrar
+            print("\n--- Cadastrar ---")
+            print("1. usuario")
+            tipo = input("O que deseja cadastrar? ")
+            
+            if tipo == '1':
+                cadastrar_usuario()
+            else:
+                print("Tipo inválido.")
+        elif opcao == '2':
+            print("Saindo do programa...")
+            break
+        
+        else:
+            print("Opção inválida. Tente novamente.")

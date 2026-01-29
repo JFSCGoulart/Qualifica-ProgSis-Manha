@@ -1,0 +1,10 @@
+#Fazer um programa para cadastrar usuários, 1 classe, (nome, endereço, telefone, cpf/cnpj, email), mostrar um visualizador com os objetos.
+
+#No menu terá duas opções, cadastrar e visualizar
+
+# main.py
+from usuarios import executar_menu
+
+
+if __name__ == "__main__":
+    executar_menu()
