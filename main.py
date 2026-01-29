@@ -1,3 +1,3 @@
 # Menu principal
-# Login (credenciais)
+# Login
 # Redirecionamento por tipo de usuário (tipos: aluno, coordenador, professor)
