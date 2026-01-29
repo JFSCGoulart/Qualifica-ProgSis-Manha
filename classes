@@ -16,3 +16,21 @@ class usuario:
                 f"Telefone: {self.telefone}\n"
                 f"Endereço: {self.endereco}\n")
 
+
+    def __str__(self):
+        return (f"--- usuario ---\n"
+                f"Nome: {self.nome}\n"
+                f"CPF/CNPJ: {self.cpf_cnpj}\n"
+                f"Email: {self.email}\n"
+                f"Telefone: {self.telefone}\n"
+                f"Endereço: {self.endereco}\n")
+    
+class Senha:
+    def __init__(self, chave, usuario):
+        self.chave = chave
+        self.usuario = usuario  # Associa a senha a um objeto Usuario
+
+    def __str__(self):
+        return f"Senha definida para o usuário: {self.usuario.nome}"
+
+
