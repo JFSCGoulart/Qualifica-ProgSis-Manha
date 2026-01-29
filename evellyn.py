@@ -13,26 +13,7 @@ cursor.execute('''
         opcao_e VARCHAR(200) NOT NULL,
         FOREING KEY (id_opcoes) REFERENCES atividades(id)
     );
-               
-    CREATE TABLE IF NOT EXISTS cursos(
-        id_curso INTEGER NOT NULL UNIQUE,
-        nome_completo TEXT NOT NULL,
-        PRIMARY KEY("id_curso", "nome_completo")
-    );
-               
-    CREATE TABLE IF NOT EXISTS atividades(
-		id INTEGER NOT NULL UNIQUE,
-		curso_id INTEGER,
-		tipo TEXT,
-		perguntas TEXT,
-		opcoes INTEGER,
-		resposta_correta TEXT,
-		dica TEXT,
-		pontuacoes INTEGER,
-		PRIMARY KEY("id"),
-        FOREING KEY (id) REFERENCES cursos(id_cursos)
-	);
-    '''); #a tabela 'atividades' e 'cursos' já existe, somente alterar umas coisas (opcoes)
+    ''')
 conexao.commit()
 # atividades
 def multipla_escolha(): #OK
@@ -40,11 +21,11 @@ def multipla_escolha(): #OK
     id_atividade=int("Digite o identificador (ID) da atividade: ")
     questão=input("Digite o enunciado da atividade: ")
     resposta_correta=input("Digite a resposta correta: ")
-    opcao_a=input("Digite a primeira opção: ")
-    opcao_b=input("Digite a segunda opção: ")
-    opcao_c=input("Digite a terceira opção: ")
-    opcao_d=input("Digite a quarta opção: ")
-    opcao_e=input("Digite a quinta opção: ")
+    opcao_a=input("Digite a opção 'A': ")
+    opcao_b=input("Digite a opção 'B': ")
+    opcao_c=input("Digite a opção 'C': ")
+    opcao_d=input("Digite a opção 'D': ")
+    opcao_e=input("Digite a opção 'E': ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
@@ -55,11 +36,11 @@ def verdadeiro_falso(): #OK
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     id_atividade=int("Digite o identificador (ID) da atividade: ")
     questão=input("Digite o enunciado da atividade: ")
-    alternativa_a=input("Digite a primeira opção: ")
-    alternativa_b=input("Digite a segunda opção: ")
-    alternativa_c=input("Digite a terceira opção: ")
-    alternativa_d=input("Digite a quarta opção: ")
-    alternativa_e=input("Digite a quarta opção: ")
+    alternativa_a=input("Digite a opção 'A': ")
+    alternativa_b=input("Digite a opção 'B': ")
+    alternativa_c=input("Digite a opção 'C': ")
+    alternativa_d=input("Digite a opção 'D': ")
+    alternativa_e=input("Digite a opção 'E': ")
     resposta_correta=input("Digite a resposta correta: ")
     dica=input("Digite a dica: ")
     pontuacao=1
