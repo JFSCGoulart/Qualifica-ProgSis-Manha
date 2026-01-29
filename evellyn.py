@@ -6,11 +6,11 @@ cursor=conexao.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS opcoes(
         id_opcoes INTEGER NOT NULL UNIQUE,
-        opcao_a VARCHAR(200) NOT NULL,
-        opcao_b VARCHAR(200) NOT NULL,
-        opcao_c VARCHAR(200) NOT NULL,
-        opcao_d VARCHAR(200) NOT NULL,
-        opcao_e VARCHAR(200) NOT NULL,
+        opcao_a TEXT NOT NULL,
+        opcao_b TEXT NOT NULL,
+        opcao_c TEXT NOT NULL,
+        opcao_d TEXT NOT NULL,
+        opcao_e TEXT NOT NULL,
         FOREING KEY (id_opcoes) REFERENCES atividades(id)
     );
     ''')
