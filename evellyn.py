@@ -10,6 +10,7 @@ cursor.execute('''
         opcao_b VARCHAR(200) NOT NULL,
         opcao_c VARCHAR(200) NOT NULL,
         opcao_d VARCHAR(200) NOT NULL,
+        opcao_e VARCHAR(200) NOT NULL,
         FOREING KEY (id_opcoes) REFERENCES atividades(id)
     );
                
@@ -43,10 +44,11 @@ def multipla_escolha(): #OK
     opcao_b=input("Digite a segunda opção: ")
     opcao_c=input("Digite a terceira opção: ")
     opcao_d=input("Digite a quarta opção: ")
+    opcao_e=input("Digite a quinta opção: ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
-    cursor.execute('''INSERT INTO opcoes(id_opcoes, opcao_a, opcao_b, opcao_c, opcao_d) VALUES (?, ?, ?, ?, ?)''', (id_atividade, opcao_a, opcao_b, opcao_c, opcao_d))
+    cursor.execute('''INSERT INTO opcoes(id_opcoes, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', (id_atividade, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e))
     print("Atividade de Múltipla Escolha adicionada com sucesso!")
     conexao.commit()
 def verdadeiro_falso(): #OK
@@ -57,39 +59,44 @@ def verdadeiro_falso(): #OK
     alternativa_b=input("Digite a segunda opção: ")
     alternativa_c=input("Digite a terceira opção: ")
     alternativa_d=input("Digite a quarta opção: ")
+    alternativa_e=input("Digite a quarta opção: ")
     resposta_correta=input("Digite a resposta correta: ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
-    cursor.execute('''INSERT INTO opcoes(id_opcoes, opcao_a, opcao_b, opcao_c, opcao_d) VALUES (?, ?, ?, ?, ?)''', (id_atividade, alternativa_a, alternativa_b, alternativa_c, alternativa_d))
+    cursor.execute('''INSERT INTO opcoes(id_opcoes, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', (id_atividade, alternativa_a, alternativa_b, alternativa_c, alternativa_d, alternativa_e))
     print("Atividade de Verdadeiro e Falso adicionada com sucesso!")
     conexao.commit()
 def preencher_lacunas(): #OK
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    resposta_correta=input("Digite a resposta correta: ")
+    resposta_correta=input("Digite a resposta correta: ").lower
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
     print("Atividade de Preencher Lacunas adicionada com sucesso!")
     conexao.commit()
-def ordenar_etapas(): # COLOCAR A TABELA 'opcoes'
+def ordenar_etapas(): # OK
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    
-    resposta_correta=input("Digite a resposta correta: ")
+    etapa_a=input("Digite a etapa: ")
+    etapa_b=input("Digite a etapa: ")
+    etapa_c=input("Digite a etapa: ")
+    etapa_d=input("Digite a etapa: ")
+    etapa_e=input("Digite a etapa: ")
+    resposta_correta=input("Digite a resposta correta (ex: A(1), B(2)): ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
+    cursor.execute('''INSERT INTO opcoes(id_opcoes, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', (etapa_a, etapa_b, etapa_c, etapa_d, etapa_e))
     print("Atividade de Ordenar Etapas adicionada com sucesso")
     conexao.commit()
 def sequencia_logica(): # COLOCAR A TABELA 'opcoes'
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     questão=input("Digite o enunciado da atividade: ")
-    
     resposta_correta=input("Digite a resposta correta: ")
     dica=input("Digite a dica: ")
     pontuacao=1
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
     print("Atividade de Sequência Lógica adicionada com sucesso!")
     conexao.commit()
