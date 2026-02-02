@@ -9,8 +9,6 @@
     # cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
     # conexao.commit()
 
-
-
 #o Classificação (separar categorias)
 #  def classificacao (): 
     #  id_curso=int(input("Digite o identificador (ID) do curso: "))
@@ -21,9 +19,6 @@
     #  pontuacao= 1 
     #  cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
     #  conexao.commit()
-
-
-
 
 #o Escolha múltipla (várias corretas)
 #  def escolha_multipla():
@@ -41,9 +36,6 @@
     #  cursor.execute('''INSET INTO opcoes(acoes)) 
     # conexao.commit()
 
-
-
-
 #o Palavra embaralhada
 # def palavra_embralhada():
     # id_curso=int(input("Digite o identificador (ID) do curso: "))
@@ -54,10 +46,6 @@
     # pontuacao = 1 
     # cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, opcoes, resposta_correta, dica, pontuacao))
     # conexao.commit()
-
-
-
-
 
 #o Mini-cenários com decisões
 # def mini_cenarios():
