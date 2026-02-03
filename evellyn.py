@@ -95,5 +95,3 @@ def sequencia_logica(): # COLOCAR A TABELA 'opcoes'
     print("Atividade de Sequência Lógica adicionada com sucesso!")
     conexao.commit()
     conexao.close()
-def estrela(): # tabela de usuário (tipo aluno) necessária para receber
-    cursor.execute('''INSERT INTO aluno(pontuacao) VALUES (?)''', (1))
