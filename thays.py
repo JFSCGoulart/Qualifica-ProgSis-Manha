@@ -1,74 +1,145 @@
 import sqlite3
 import sys
+import os
+import hashlib
+import binascii
+import getpass
+from datetime import datetime
 
-# --- Classes de Banco de Dados e Usuários ---
+DB_FILENAME = "qualifica.db"
+PBKDF2_ITERATIONS = 120_000  # aumenta a segurança; em produção considere bcrypt/argon2
+
 
 class Database:
-    """Gerencia a conexão e criação de tabelas no banco de dados SQLite."""
-    def __init__(self, db_name="qualifica.db"):
-        self.conn = sqlite3.connect(db_name)
+    """Gerencia conexão com contexto e operações básicas no DB."""
+    def __init__(self, db_name=DB_FILENAME):
+        self.db_name = db_name
+        self.conn = None
+        self.cursor = None
+
+    def __enter__(self):
+        self.conn = sqlite3.connect(self.db_name)
+        self.conn.row_factory = sqlite3.Row
         self.cursor = self.conn.cursor()
         self.create_tables()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.conn:
+            if exc_type is None:
+                self.conn.commit()
+            else:
+                self.conn.rollback()
+            self.conn.close()
 
     def create_tables(self):
-        # Tabela de usuários conforme especificado no PDF
+        # Tabela de usuários: armazenamos hash e salt separadamente
         self.cursor.execute("""
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nome TEXT NOT NULL,
-                senha TEXT NOT NULL,
-                tipo TEXT NOT NULL
-            );
+        CREATE TABLE IF NOT EXISTS usuarios (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            senha_hash TEXT NOT NULL,
+            senha_salt TEXT NOT NULL,
+            tipo TEXT NOT NULL,
+            criado_em TEXT NOT NULL,
+            UNIQUE(nome, tipo)
+        );
         """)
-        # Adicione outras tabelas aqui (cursos, atividades, progresso, etc.)
-        self.conn.commit()
+        # Crie outras tabelas (cursos, atividades, progresso) quando necessário.
 
-    def close_connection(self):
-        self.conn.close()
+    # Operações de alto nível:
+    def add_user(self, nome, senha_hash_hex, salt_hex, tipo):
+        criado_em = datetime.utcnow().isoformat()
+        try:
+            self.cursor.execute(
+                "INSERT INTO usuarios (nome, senha_hash, senha_salt, tipo, criado_em) VALUES (?, ?, ?, ?, ?)",
+                (nome, senha_hash_hex, salt_hex, tipo, criado_em)
+            )
+            return True
+        except sqlite3.IntegrityError:
+            return False
+
+    def get_user(self, nome, tipo):
+        self.cursor.execute("SELECT * FROM usuarios WHERE nome=? AND tipo=?", (nome, tipo))
+        row = self.cursor.fetchone()
+        return row
+
+
+# --- Funções úteis para senha (PBKDF2) ---
+
+def generate_salt(length=16):
+    return os.urandom(length)
+
+def hash_password(password: str, salt: bytes, iterations=PBKDF2_ITERATIONS):
+    """
+    Retorna o hash em bytes. Usamos SHA256 na PBKDF2.
+    """
+    pwd = password.encode("utf-8")
+    dk = hashlib.pbkdf2_hmac("sha256", pwd, salt, iterations)
+    return dk
+
+def to_hex(b: bytes) -> str:
+    return binascii.hexlify(b).decode("ascii")
+
+def from_hex(h: str) -> bytes:
+    return binascii.unhexlify(h.encode("ascii"))
+
+
+# --- Classes de Usuário ---
 
 class Usuario:
-    """Classe base para gerenciar usuários."""
-    def __init__(self, nome, senha, tipo):
+    def __init__(self, nome, tipo):
         self.nome = nome
-        self.senha = senha
         self.tipo = tipo
 
-    def login(self):
-        db = Database()
-        # Consulta para verificar o usuário
-        db.cursor.execute("SELECT * FROM usuarios WHERE nome=? AND senha=? AND tipo=?", (self.nome, self.senha, self.tipo))
-        user = db.cursor.fetchone()
-        db.close_connection()
-        return user is not None
+    @staticmethod
+    def cadastrar(nome: str, senha: str, tipo: str) -> bool:
+        salt = generate_salt()
+        senha_hash = hash_password(senha, salt)
+        salt_hex = to_hex(salt)
+        hash_hex = to_hex(senha_hash)
 
-    def cadastrar(self):
-        db = Database()
-        try:
-            db.cursor.execute("INSERT INTO usuarios (nome, senha, tipo) VALUES (?, ?, ?)", (self.nome, self.senha, self.tipo))
-            db.conn.commit()
-            print(f"Usuário {self.nome} ({self.tipo}) cadastrado com sucesso!")
-        except sqlite3.IntegrityError:
-            print("Erro: Usuário já existe.")
-        finally:
-            db.close_connection()
+        with Database() as db:
+            success = db.add_user(nome, hash_hex, salt_hex, tipo)
+            return success
 
-# Classes filhas específicas
+    @staticmethod
+    def login(nome: str, senha: str, tipo: str) -> bool:
+        with Database() as db:
+            row = db.get_user(nome, tipo)
+            if not row:
+                return False
+            stored_hash_hex = row["senha_hash"]
+            stored_salt_hex = row["senha_salt"]
+
+            stored_salt = from_hex(stored_salt_hex)
+            stored_hash = from_hex(stored_hash_hex)
+
+            attempt_hash = hash_password(senha, stored_salt)
+
+            # Compare byte-by-byte (timing-safe not strictly necessary aqui, mas ok):
+            return hashlib.compare_digest(stored_hash, attempt_hash)
+
+
 class Aluno(Usuario):
-    def __init__(self, nome, senha):
-        super().__init__(nome, senha, "Aluno")
-    # Adicione métodos específicos do aluno aqui
+    def __init__(self, nome):
+        super().__init__(nome, "Aluno")
+    # Métodos específicos do Aluno
+
 
 class Professor(Usuario):
-    def __init__(self, nome, senha):
-        super().__init__(nome, senha, "Professor")
-    # Adicione métodos específicos do professor aqui
+    def __init__(self, nome):
+        super().__init__(nome, "Professor")
+    # Métodos específicos do Professor
+
 
 class Coordenador(Usuario):
-    def __init__(self, nome, senha):
-        super().__init__(nome, senha, "Coordenador")
-    # Adicione métodos específicos do coordenador aqui
+    def __init__(self, nome):
+        super().__init__(nome, "Coordenador")
+    # Métodos específicos do Coordenador
 
-# --- Funções do Menu ---
+
+# --- Menus e Handlers ---
 
 def menu_aluno_view(nome_usuario):
     """Menu exclusivo para alunos."""
@@ -78,65 +149,110 @@ def menu_aluno_view(nome_usuario):
         print("2. Fazer atividades")
         print("3. Ver progresso")
         print("4. Sair")
-        
-        escolha = input("Escolha uma opção: ")
+        escolha = input("Escolha uma opção: ").strip()
         if escolha == "4":
             break
         else:
             print("Funcionalidade ainda não implementada.")
 
-def login_handler(tipo_usuario):
-    """Função genérica para gerenciar o login."""
-    nome = input(f"Nome do {tipo_usuario}: ")
-    senha = input("Senha: ")
-    
-    usuario = None
-    if tipo_usuario == "Aluno":
-        usuario = Aluno(nome, senha)
-    elif tipo_usuario == "Professor":
-        usuario = Professor(nome, senha)
-    elif tipo_usuario == "Coordenador":
-        usuario = Coordenador(nome, senha)
 
-    if usuario and usuario.login():
+def menu_professor_view(nome_usuario):
+    while True:
+        print(f"\n### Menu do Professor - {nome_usuario} ###")
+        print("1. Criar atividade")
+        print("2. Ver turmas")
+        print("3. Sair")
+        escolha = input("Escolha uma opção: ").strip()
+        if escolha == "3":
+            break
+        else:
+            print("Funcionalidade ainda não implementada.")
+
+
+def menu_coordenador_view(nome_usuario):
+    while True:
+        print(f"\n### Menu do Coordenador - {nome_usuario} ###")
+        print("1. Gerenciar cursos")
+        print("2. Relatórios")
+        print("3. Sair")
+        escolha = input("Escolha uma opção: ").strip()
+        if escolha == "3":
+            break
+        else:
+            print("Funcionalidade ainda não implementada.")
+
+
+def register_flow(tipo_usuario):
+    print(f"\n--- Cadastro ({tipo_usuario}) ---")
+    nome = input("Nome: ").strip()
+    senha = getpass.getpass("Senha: ")
+    senha_confirm = getpass.getpass("Confirme a senha: ")
+    if senha != senha_confirm:
+        print("As senhas não conferem. Cadastro cancelado.")
+        return
+
+    success = Usuario.cadastrar(nome, senha, tipo_usuario)
+    if success:
+        print(f"Usuário {nome} cadastrado como {tipo_usuario} com sucesso.")
+    else:
+        print("Erro: já existe um usuário com esse nome e tipo.")
+
+
+def login_flow(tipo_usuario):
+    print(f"\n--- Login ({tipo_usuario}) ---")
+    nome = input("Nome: ").strip()
+    senha = getpass.getpass("Senha: ")
+
+    ok = Usuario.login(nome, senha, tipo_usuario)
+    if ok:
         print(f"Bem-vindo(a), {tipo_usuario} {nome}!")
         if tipo_usuario == "Aluno":
-            menu_aluno_view(nome) # Redireciona para o menu específico
-        # Adicionar redirecionamentos para Professor e Coordenador aqui
+            menu_aluno_view(nome)
+        elif tipo_usuario == "Professor":
+            menu_professor_view(nome)
+        elif tipo_usuario == "Coordenador":
+            menu_coordenador_view(nome)
     else:
-        # Se o login falhar, o sistema pode perguntar se deseja cadastrar
-        print("Login falhou. Você precisa se cadastrar primeiro.")
-        # Lógica de cadastro pode ser adicionada aqui.
+        print("Login falhou. Usuário ou senha incorretos, ou usuário não cadastrado.")
+        # Oferecer cadastro
+        escolha = input("Deseja se cadastrar? (s/n): ").strip().lower()
+        if escolha == "s":
+            register_flow(tipo_usuario)
+
 
 def menu_principal():
-    """Menu principal de navegação."""
     while True:
         print("\n### Menu Principal Qualifica ###")
         print("1. Login como Aluno")
         print("2. Login como Professor")
         print("3. Login como Coordenador")
-        print("4. Sair")
-        
-        escolha = input("Escolha uma opção: ")
+        print("4. Cadastrar novo usuário")
+        print("5. Sair")
+        escolha = input("Escolha uma opção: ").strip()
 
         if escolha == "1":
-            login_handler("Aluno")
+            login_flow("Aluno")
         elif escolha == "2":
-            login_handler("Professor")
+            login_flow("Professor")
         elif escolha == "3":
-            login_handler("Coordenador")
+            login_flow("Coordenador")
         elif escolha == "4":
+            # pedir qual tipo no cadastro
+            tipo = input("Tipo (Aluno/Professor/Coordenador): ").strip().capitalize()
+            if tipo in ("Aluno", "Professor", "Coordenador"):
+                register_flow(tipo)
+            else:
+                print("Tipo inválido.")
+        elif escolha == "5":
             print("Saindo...")
-            sys.exit()
+            sys.exit(0)
         else:
             print("Opção inválida.")
 
-# --- Execução Principal ---
-if __name__ == "__main__":
-    # Garante que o banco e tabelas existam ao iniciar
-    db_setup = Database()
-    db_setup.close_connection()
-    print("Sistema iniciado. Banco de dados pronto.")
-    
-    menu_principal()
 
+if __name__ == "__main__":
+    # Inicializa DB (garante criação de tabelas)
+    with Database():
+        pass
+    print("Sistema iniciado. Banco de dados pronto.")
+    menu_principal()
