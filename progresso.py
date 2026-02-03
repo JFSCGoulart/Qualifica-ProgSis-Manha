@@ -3,9 +3,9 @@ from datetime import datetime
 PENALIDADE_POR_DICA = 5
 
 
-def criar_historico(jogador, tema):
+def criar_historico(player, tema):
     return {
-        "jogador": jogador,
+        "player": player,
         "tema": tema,
         "data": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "perguntas": 0,
@@ -40,7 +40,7 @@ def aplicar_penalidade(h):
 
 def mostrar(h):
     print(f"""
-Jogador: {h['jogador']}
+Player: {h['player']}
 Tema: {h['tema']}
 Data: {h['data']}
 -------------------------
