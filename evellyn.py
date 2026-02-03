@@ -13,7 +13,11 @@ cursor.execute('''
         opcao_e TEXT NOT NULL,
         FOREING KEY (id_atividade) REFERENCES atividades(id)
     );
-    ''')
+    CREATE TABLE IF NOT EXISTS alunos(
+        id_aluno INTEGER PRIMARY KEY UNIQUE AUTOINCREMENT,
+        pontuacao INTEGER
+    )
+''')
 conexao.commit()
 conexao.close()
 # atividades
@@ -85,13 +89,24 @@ def ordenar_etapas(): # OK
     print("Atividade de Ordenar Etapas adicionada com sucesso")
     conexao.commit()
     conexao.close()
-def sequencia_logica(): # COLOCAR A TABELA 'opcoes'
+def sequencia_logica(): # OK
     id_curso=int(input("Digite o identificador (ID) do curso: "))
+    numero_atividade=int("Digite o número da atividade: ")
     questão=input("Digite o enunciado da atividade: ")
+    sequencia_a=input("Digite a etapa: ")
+    sequencia_b=input("Digite a etapa: ")
+    sequencia_c=input("Digite a etapa: ")
+    sequencia_d=input("Digite a etapa: ")
+    sequencia_e=input("Digite a etapa: ")
     respostas=input("Digite a resposta correta: ")
     dica=input("Digite a dica: ")
     pontuacao=1
     cursor.execute('''INSERT INTO atividades(cursos_id, perguntas, respostas, dica, pontuacoes) VALUES (?, ?, ?, ?, ?)''', (id_curso, questão, respostas, dica, pontuacao))
+    cursor.execute('''INSERT INTO opcoes(id_atividade, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', (numero_atividade, sequencia_a, sequencia_b, sequencia_c, sequencia_d, sequencia_e))
     print("Atividade de Sequência Lógica adicionada com sucesso!")
+    conexao.commit()
+    conexao.close()
+def estrela(): # tabela de usuário (tipo aluno) necessária para receber
+    cursor.execute('''INSERT INTO aluno(pontuacao) VALUES (?)''', (1))
     conexao.commit()
     conexao.close()
