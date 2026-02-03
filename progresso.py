@@ -40,7 +40,7 @@ def aplicar_penalidade(h):
 
 def mostrar(h):
     print(f"""
-Player: {h['player']}
+player: {h['player']}
 Tema: {h['tema']}
 Data: {h['data']}
 -------------------------
@@ -52,3 +52,28 @@ Dicas usadas: {h['dicas']}
 Penalidade: {h['penalidade']}
 Pontos finais: {h['pontos']}
 """)
+    
+h = criar_historico("Epstein", "Video Games")
+
+# Pergunta 1 – correta
+responder(h, True)
+pontuar(h, 10)
+
+# Pergunta 2 – errada
+responder(h, False)
+
+# Pergunta 3 – correta
+responder(h, True)
+pontuar(h, 10)
+
+# Usa dicas
+dica(h)
+dica(h)
+dica(h)
+dica(h)   # aqui vai começar a dar merda (penalidade)
+
+# Aplica penalidade no final
+aplicar_penalidade(h)
+
+# Mostra resultado
+mostrar(h)
