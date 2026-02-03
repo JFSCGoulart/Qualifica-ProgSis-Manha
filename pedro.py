@@ -53,7 +53,7 @@ def escolha_multipla():
     dica=input("Digite a dica: ")
     pontuacao= 1 
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
-    cursor.execute('''INSET INTO opcoes(acoes)''') 
+    cursor.execute('''INSERT INTO opcoes(id_atividade, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', ( opcao_a, opcao_b, opcao_c, opcao_d, opcao_e)) 
     conexao.commit()
 
 #o Palavra embaralhada
