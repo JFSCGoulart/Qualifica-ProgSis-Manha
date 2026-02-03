@@ -21,24 +21,24 @@ cursor.execute('''
 #o Correspondência (ligar colunas) 
 def correspondecia (): 
     id_curso=int(input("Digite o identificador (ID) do curso: "))
-    questao=input("Digite o enunciado da atividade: ")
+    perguntas=input("Digite o enunciado da atividade: ")
     pares = input("Digite os pares (ex: A-1; B-2; C-3)")
-    resposta_correta= pares  
+    respostas= pares  
     dica=input("Digite a dica: ")
     pontuacao = 1 
-    cursor.execute('''INSET INTO atividades(cursor_id, questao, pares, resposta_correta, dica, pontuacao) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questao, resposta_correta, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, pares, respostas, dica, pontuacao) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, perguntas, respostas, dica, pontuacao))
     cursor.execute('''INSET INTO opcoes(pares) VALUES (?)''')
     conexao.commit()
 
 # o Classificação (separar categorias)
 def classificacao (): 
     id_curso=int(input("Digite o identificador (ID) do curso: "))
-    questao=input("Digite o enunciado da atividade: ")
+    perguntas=input("Digite o enunciado da atividade: ")
     categorias = input("Digite categorias e itens (ex: Inteiro = 11 ,256 ; Racionais : 3.78 , 4/2 ;)")
-    resposta_correta = categorias
+    respostas = categorias
     dica = input("Digite a dica: ")
     pontuacao= 1 
-    cursor.execute('''INSET INTO atividades(cursor_id, questao, opcoes, categorias , resposta_correta, dica, pontuacao) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questao,resposta_correta, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, categorias , respostas, dica, pontuacao) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso,perguntas,respostas, dica, pontuacao))
     conexao.commit()
 
 #o Escolha múltipla (várias corretas)
@@ -50,10 +50,10 @@ def escolha_multipla():
     opcao_c = input("Digite a 'C' opção : ")
     opcao_d = input("Digite a 'D' opção : ")
     opcao_e = input("Digite a 'E' opção : ")
-    resposta_correta=input("Digite as alternativas certas (ex: A,C) : ")
+    respostas=input("Digite as alternativas certas (ex: A,C) : ")
     dica=input("Digite a dica: ")
     pontuacao= 1 
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, resposta_correta, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, respostas, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, questão, respostas, dica, pontuacao))
     cursor.execute('''INSERT INTO opcoes(id_atividade, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e) VALUES (?, ?, ?, ?, ?, ?)''', ( opcao_a, opcao_b, opcao_c, opcao_d, opcao_e)) 
     conexao.commit()
 
@@ -65,7 +65,7 @@ def palavra_embralhada():
     perguntas = f"Desembralhe a palavra {embralhada}: "
     dica=input("Digite a dica: ")
     pontuacao = 1 
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso,perguntas, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso,perguntas, dica, pontuacao))
     cursor.execute('''INSERT INTO opcoes(palavra,embralhada,) VALUES (?,?)''' , (palavra,embralhada))
     conexao.commit()
 
@@ -74,9 +74,9 @@ def mini_cenarios():
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     cenario=input("Digite o cénario : ")
     decisoes = input("Digite as decisões que o aluno pode tomar : ")
-    resposta_correta=input("Digite a decisão certa : ")
+    respostas=input("Digite a decisão certa : ")
     dica=input("Digite a dica: ")
     pontuacao = 1
-    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, resposta_correta, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, cenario, decisoes, resposta_correta, dica, pontuacao))
+    cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, respostas, dica, pontuacoes) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso, cenario, decisoes, respostas, dica, pontuacao))
     cursor.execute('''INSERT INTO opcoes(cenario,decisoes) VALUES (?,?)''' , (cenario,decisoes))
     conexao.commit()
