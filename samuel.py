@@ -1,1 +1,0 @@
-print("Rita de Cássia")
