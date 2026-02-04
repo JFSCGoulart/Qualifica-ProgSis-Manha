@@ -22,7 +22,9 @@ cursor.execute('''
 def correspondecia (): 
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     perguntas=input("Digite o enunciado da atividade: ")
-    pares = input("Digite os pares (ex: A-1; B-2; C-3)")
+    coluna_1=input("Digite a primeira coluna: ")
+    coluna_2=input("Digite a segunda coluna: ")
+    pares = input("Digite os pares das colunas(ex: A-1; B-2; C-3): ")
     respostas= pares  
     dica=input("Digite a dica: ")
     pontuacao = 1 
