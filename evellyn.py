@@ -7,7 +7,7 @@ cursor=conexao.cursor()
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS atividades(
         id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_modulo INTEGER NOT NULL,
+        modulo TEXT NOT NULL,
         id_cursos INTEGER NOT NULL,
         tipo TEXT NOT NULL,
         perguntas TEXT NOT NULL,
@@ -18,8 +18,7 @@ cursor.execute('''
         opcao_e TEXT NOT NULL,
         respostas TEXT NOT NULL,
         dica TEXT NOT NULL,
-        pontuacoes FLOAT NOT NULL,
-        FOREIGN KEY (id_modulo) REFERENCES modulo(id)
+        pontuacoes FLOAT NOT NULL
     );
 ''')
 conexao.commit()
@@ -28,6 +27,7 @@ conexao.close()
 # Atividades
 def adicionar_atividades():
     id_curso=int(input("Digite o identificador (ID) do curso: "))
+    modulo=input("Digite o módulo da atividade: ")
     tipo=input("Digite o tipo de atividade: ")
     questão=input("Digite o enunciado da atividade: ")
     opcao_a=input("Digite a opção 'A': ")
@@ -41,9 +41,16 @@ def adicionar_atividades():
 
     # Inserir a atividade
     cursor.execute('''
-        INSERT INTO atividades(cursos_id, tipo, perguntas, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e, resposta, dica, pontuacoes)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (id_curso, tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e, resposta, dica, pontuacao))
+        INSERT INTO atividades(modulo, id_cursos, tipo, perguntas, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e, resposta, dica, pontuacoes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (modulo, id_curso, tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, opcao_e, resposta, dica, pontuacao))
     conexao.commit()
     conexao.close()
     print(f"Atividade de {tipo} adicionada com sucesso!")
+
+# Ver as atividades
+def ver_atividades():
+    cursor.execute("SELECT * FROM atividades")
+    atividades=cursor.fetchall()
+    for linha in atividades:
+        print(linha)
