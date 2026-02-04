@@ -36,8 +36,9 @@ def correspondecia ():
 def classificacao (): 
     id_curso=int(input("Digite o identificador (ID) do curso: "))
     perguntas=input("Digite o enunciado da atividade: ")
-    categorias = input("Digite categorias e itens (ex: Inteiro = 11 ,256 ; Racionais : 3.78 , 4/2 ;)")
-    respostas = categorias
+    categorias = input("Digite categorias : (Inteiro, Racionais ) : e itens (ex: Inteiro = 11 ,256 ; Racionais : 3.78 , 4/2 ;)")
+    itens=input("Digite os itens para relacionar (Ex: 4 , 45 , 3.4) : ")
+    respostas = itens
     dica = input("Digite a dica: ")
     pontuacao= 1 
     cursor.execute('''INSET INTO atividades(cursor_id, perguntas, opcoes, categorias , respostas, dica, pontuacao) VALUES (?, ?, ?, ?, ?, ?)''', (id_curso,perguntas,respostas, dica, pontuacao))
