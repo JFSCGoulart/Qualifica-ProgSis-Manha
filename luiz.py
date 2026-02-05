@@ -1,5 +1,4 @@
 import sqlite3
-import sys
 
 # --- 1. Camada de Dados (Banco de Dados) ---
 
@@ -18,7 +17,7 @@ class Database:
                 tipo TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 cpf TEXT UNIQUE NOT NULL,
-                endereco TEXT NOT NULL,
+                endereco TEXT NOT NULL
                 
             );
         ''')
@@ -87,7 +86,7 @@ def tela_cadastro():
     tipo = mapa.get(tipo_op)
     
     if tipo:
-        novo_user = Usuario(nome, senha, tipo)
+        novo_user = Usuario(nome, senha, tipo, email, endereco)
         novo_user.cadastrar()
     else:
         print("[!] Tipo de conta inválido.")
