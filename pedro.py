@@ -20,7 +20,7 @@ cursor.execute('''
 
 #o Correspondência (ligar colunas) 
 def correspondecia (): 
-    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    
     perguntas=input("Digite o enunciado da atividade: ")
     coluna_1=input("Digite a primeira coluna: ")
     coluna_2=input("Digite a segunda coluna: ")
@@ -34,7 +34,7 @@ def correspondecia ():
 
 # o Classificação (separar categorias)
 def classificacao (): 
-    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    
     perguntas=input("Digite o enunciado da atividade: ")
     categorias = input("Digite categorias : (Inteiro, Racionais ) : e itens (ex: Inteiro = 11 ,256 ; Racionais : 3.78 , 4/2 ;)")
     itens=input("Digite os itens para relacionar (Ex: 4 , 45 , 3.4) : ")
@@ -46,7 +46,7 @@ def classificacao ():
 
 #o Escolha múltipla (várias corretas)
 def escolha_multipla():
-    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    
     questão=input("Digite o enunciado da atividade: ")
     opcao_a = input("Digite a 'A' opção : ")
     opcao_b = input("Digite a 'B' opção : ")
@@ -62,7 +62,7 @@ def escolha_multipla():
 
 #o Palavra embaralhada
 def palavra_embralhada():
-    id_curso=int(input("Digite o identificador (ID) do curso: "))
+
     palavra = input("Digite a palvara correrta : ")
     embralhada = input("Digite a palavra embralhada : ")
     perguntas = f"Desembralhe a palavra {embralhada}: "
@@ -74,7 +74,7 @@ def palavra_embralhada():
 
 #o Mini-cenários com decisões
 def mini_cenarios():
-    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    
     cenario=input("Digite o cénario : ")
     decisoes = input("Digite as decisões que o aluno pode tomar : ")
     respostas=input("Digite a decisão certa : ")
