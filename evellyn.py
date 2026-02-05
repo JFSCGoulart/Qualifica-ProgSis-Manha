@@ -31,26 +31,25 @@ def ver_cursos():
         print(linha)
 
 # Ver os módulos disponíveis
-def ver_modulos():
-    cursor.execute("SELECT * FROM modulos")
+def ver_modulos(curso_selecionado):
+    cursor.execute("SELECT * FROM modulos WHERE id=?", (curso_selecionado))
     modulos=cursor.fetchall()
     for linha in modulos:
         print(linha)
 
-# Entrar no curso
-def entrar_curso():
+# Entrar no curso e no módulo
+def entrar_curso_modulo():
+    # Curso
     ver_cursos()
     selecao_curso=int(input("Digite o identificador (ID) do curso que deseja entrar: "))
-    print(f"{selecao_curso} com sucesso!")  #rever isso
+    print(f"O curso '{selecao_curso}' foi selecionado com sucesso!")
 
-# Entrar no módulo 
-def entrar_modulo():
-    pass
+    # Módulo
+    ver_modulos(selecao_curso)
+    selecao_modulo=int(input("Digite o identificador (ID) do módulo que deseja entrar: "))
+    print(f"O curso '{selecao_modulo}' foi selecionado com sucesso!")
 
-# Adicionar atividades
-def adicionar_atividades():
-    id_curso=int(input("Digite o identificador (ID) do curso: ")) #rever isso
-    id_modulo=input("Digite o módulo da atividade: ") #rever isso
+    # Adicionar atividades
     tipo=input("Digite o tipo de atividade: ")
     questão=input("Digite o enunciado da atividade: ")
     opcao_a=input("Digite a opção 'A': ")
@@ -64,7 +63,7 @@ def adicionar_atividades():
     cursor.execute('''
         INSERT INTO atividades(id_modulo, id_cursos, tipo, perguntas, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (id_modulo, id_curso, tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica))
+    ''', (selecao_modulo, selecao_curso, tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica))
     conexao.commit()
     conexao.close()
     print(f"Atividade de {tipo} adicionada com sucesso!")
@@ -87,7 +86,7 @@ def excluir_atividade():
 # Editar atividade
 def editar_atividade():
     ver_atividades()
-    alteracao=input("Digite a alteração da questão: ") #ajustar essa parte
-    tipo_alterar=input("Digite qual ") #ajustar essa parte
-    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: ")) #ajustar essa parte
+    tipo_alterar=input("Digite o que deseja alterar: ")
+    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))
+    alteracao=input("Digite a alteração da questão: ")
     cursor.execute("UPDATE atividades SET ? WHERE ?=?", (alteracao, tipo_alterar, indice_alterar))
