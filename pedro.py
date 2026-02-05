@@ -18,6 +18,18 @@ cursor.execute('''
     )
     ''')
 
+
+cursor.execute('''
+   CREATE TABLE IF NOT EXISTS modulos(
+       id_modulo TEXT NOT NULL,
+       nome_modulo TEXT NOT NULL 
+   ); 
+    CREATE TABLE IF NOT EXISTS cursos (
+        id_curso TEXT NOT NULL,
+        nome_curso TEXT NOT NULL     
+    )
+''')
+
 #o Correspondência (ligar colunas) 
 def correspondecia (): 
     
