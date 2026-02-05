@@ -5,7 +5,7 @@ cursor=conexao.cursor()
 
 # Alterar tabela 'atividades' para receber opções
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS atividades(
+CREATE TABLE IF NOT EXISTS atividades(
         id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,
         id_modulo INTEGER NOT NULL,
         id_cursos INTEGER NOT NULL,
@@ -17,8 +17,54 @@ cursor.execute('''
         opcao_d TEXT NOT NULL,
         respostas TEXT NOT NULL,
         dica TEXT NOT NULL,
+        pontucao BOOL NOT NULL
         FOREIGN KEY (id_modulo) REFERENCES modulo(id)
     );
+''')
+conexao.commit()
+conexao.close()
+
+# Novas tabelas 'usuarios', 'cursos', 'progresso', 'estrela' e 'modulos'
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS usuarios(
+        id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+   	    nome_completo TEXT NOT NULL,
+		data_nascimento DATE NOT NULL,
+		CPF INTEGER NOT NULL,
+		telefone INTEGER NOT NULL,
+		id_tipo_usuario VARCHAR NOT NULL,
+        senha TEXT NOT NULL,   
+        tipo TEXT NOT NULL CHECK (tipo IN (aluno, professor, coordenador))
+    );
+               
+    CREATE TABLE IF NOT EXISTS cursos(
+        id_curso INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        descricao TEXT
+    );
+               
+    CREATE TABLE IF NOT EXISTS modulo(
+        id_modulo INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_curso INTEGER NOT NULL,
+        nome_modulo TEXT NOT NULL,
+        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
+    );
+
+    CREATE TABLE progresso(
+        id_progresso INTEGER PRIMARY KEY AUTOINCREMENT,
+        id_usuario INTEGER NOT NULL,
+        id_atividade INTEGER NOT NULL,
+        acertou INTEGER NOT NULL CHECK (acertou IN (0,1)),
+        data_execucao TEXT NOT NULL,
+        FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+        FOREIGN KEY (id_atividade) REFERENCES atividades(id_atividade)
+    );
+
+    CREATE TABLE estrelas(
+        id_usuario INTEGER PRIMARY KEY,
+        total_estrelas INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+    );                 
 ''')
 conexao.commit()
 conexao.close()
