@@ -17,7 +17,6 @@ cursor.execute('''
         opcao_d TEXT NOT NULL,
         resposta TEXT NOT NULL,
         dica TEXT NOT NULL,
-        pontucao BOOL NOT NULL
         FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
         FOREIGN KEY (id_modulo) REFERENCES modulo(id)
     );
@@ -78,8 +77,8 @@ def ver_cursos():
         print(linha)
 
 # Ver os módulos disponíveis
-def ver_modulos(curso_selecionado):
-    cursor.execute("SELECT * FROM modulos WHERE id_curso=?", (curso_selecionado))
+def ver_modulos(curso_selecionado,):
+    cursor.execute("SELECT * FROM modulos WHERE id_curso=?", (curso_selecionado,))
     modulos=cursor.fetchall()
     for linha in modulos:
         print(linha)
@@ -94,7 +93,7 @@ def entrar_curso_modulo():
     # Módulo
     ver_modulos(selecao_curso)
     selecao_modulo=int(input("Digite o identificador (ID) do módulo que deseja entrar: "))
-    print(f"O curso '{selecao_modulo}' foi selecionado com sucesso!")
+    print(f"O módulo '{selecao_modulo}' foi selecionado com sucesso!")
 
     # Adicionar atividades
     tipo=input("Digite o tipo de atividade: ")
@@ -105,10 +104,10 @@ def entrar_curso_modulo():
     opcao_d=input("Digite a opção 'D': ")
     resposta=input("Digite a resposta correta: ").upper()
     dica=input("Digite a dica: ")
-
+    
     # Inserir a atividade
     cursor.execute('''
-        INSERT INTO atividades(id_modulo, id_cursos, tipo, perguntas, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica)
+        INSERT INTO atividades(id_modulo, id_curso, tipo, pergunta, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (selecao_modulo, selecao_curso, tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica))
     conexao.commit()
