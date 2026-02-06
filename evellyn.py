@@ -23,7 +23,6 @@ cursor.execute('''
 ''')
 conexao.commit()
 conexao.close()
-
 # Novas tabelas 'usuarios', 'cursos', 'progresso', 'estrela' e 'modulos'
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS usuarios(
