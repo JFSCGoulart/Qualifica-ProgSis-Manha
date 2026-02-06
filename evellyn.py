@@ -1,72 +1,84 @@
 import sqlite3
 
-conexao=sqlite3.connect('sistema.db')
-cursor=conexao.cursor()
+conexao = sqlite3.connect('sistema.db')
+cursor = conexao.cursor()
 
-# Alterar tabela 'atividades' para receber opções
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS atividades(
-        id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_modulo INTEGER NOT NULL,
-        id_curso INTEGER NOT NULL,
-        tipo TEXT NOT NULL,
-        pergunta TEXT NOT NULL,
-        opcao_a TEXT NOT NULL,
-        opcao_b TEXT NOT NULL,
-        opcao_c TEXT NOT NULL,
-        opcao_d TEXT NOT NULL,
-        resposta TEXT NOT NULL,
-        dica TEXT NOT NULL,
-        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
-        FOREIGN KEY (id_modulo) REFERENCES modulo(id)
-    );
-''')
-conexao.commit()
-conexao.close()
-# Novas tabelas 'usuarios', 'cursos', 'progresso', 'estrela' e 'modulos'
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS usuarios(
-        id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
-   	    nome_completo TEXT NOT NULL,
-		data_nascimento DATE NOT NULL,
-		CPF INTEGER NOT NULL,
-		telefone INTEGER NOT NULL,
-		id_tipo_usuario VARCHAR NOT NULL,
-        senha TEXT NOT NULL,   
-        tipo TEXT NOT NULL CHECK (tipo IN (aluno, professor, coordenador))
-    );
-               
-    CREATE TABLE IF NOT EXISTS cursos(
-        id_curso INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        descricao TEXT
-    );
-               
-    CREATE TABLE IF NOT EXISTS modulo(
-        id_modulo INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_curso INTEGER NOT NULL,
-        nome_modulo TEXT NOT NULL,
-        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
-    );
+def criar_tabelas():
+    # Tabela de cursos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS cursos(
+            id_curso INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            descricao TEXT NOT NULL
+        );
+    ''')
 
-    CREATE TABLE progresso(
-        id_progresso INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_usuario INTEGER NOT NULL,
-        id_atividade INTEGER NOT NULL,
-        acertou INTEGER NOT NULL CHECK (acertou IN (0,1)),
-        data_execucao TEXT NOT NULL,
-        FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
-        FOREIGN KEY (id_atividade) REFERENCES atividades(id_atividade)
-    );
+    # Tabela de módulos
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS modulos(
+            id_modulo INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_curso INTEGER NOT NULL,
+            nome_modulo TEXT NOT NULL,
+            FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
+        );
+    ''')
 
-    CREATE TABLE estrelas(
-        id_usuario INTEGER PRIMARY KEY,
-        total_estrelas INTEGER NOT NULL DEFAULT 0,
-        FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
-    );                 
-''')
-conexao.commit()
-conexao.close()
+    # Tabela de usuários
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios(
+            id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome_completo TEXT NOT NULL,
+            data_nascimento DATE NOT NULL,
+            CPF INTEGER NOT NULL,
+            telefone INTEGER NOT NULL,
+            id_tipo_usuario VARCHAR NOT NULL,
+            senha TEXT NOT NULL,   
+            tipo TEXT NOT NULL CHECK (tipo IN ('aluno', 'professor', 'coordenador'))
+        );
+    ''')
+
+    # Tabela de atividades
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS atividades(
+            id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_modulo INTEGER NOT NULL,
+            id_curso INTEGER NOT NULL,
+            tipo TEXT NOT NULL,
+            pergunta TEXT NOT NULL,
+            opcao_a TEXT NOT NULL,
+            opcao_b TEXT NOT NULL,
+            opcao_c TEXT NOT NULL,
+            opcao_d TEXT NOT NULL,
+            resposta TEXT NOT NULL,
+            dica TEXT NOT NULL,
+            FOREIGN KEY (id_curso) REFERENCES cursos(id_curso),
+            FOREIGN KEY (id_modulo) REFERENCES modulos(id_modulo)
+        );
+    ''')
+    
+    # Tabela de progresso
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS progresso(
+            id_progresso INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            id_atividade INTEGER NOT NULL,
+            acertou INTEGER NOT NULL CHECK (acertou IN (0, 1)),
+            data_execucao TEXT NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+            FOREIGN KEY (id_atividade) REFERENCES atividades(id_atividade)
+        );
+    ''')
+
+    # Tabela de estrelas
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS estrelas(
+            id_usuario INTEGER PRIMARY KEY,
+            total_estrelas INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+        );
+    ''')
+    conexao.commit()
+    conexao.close()
 
 # Ver os cursos disponíveis
 def ver_cursos():
@@ -75,12 +87,69 @@ def ver_cursos():
     for linha in cursos:
         print(linha)
 
+# Criar curso
+def criar_curso():
+    nome=input("Digite o nome do curso: ")
+    descricao=input("Digite a descrição do curso: ")
+
+    cursor.execute('''
+        INSERT INTO cursos(nome, descricao)
+        VALUES (?, ?)
+    ''', (nome, descricao))
+    conexao.commit()
+    conexao.close()
+
+# Exluir cursos
+def excluir_curso():
+    ver_cursos()
+    excluir=int(input("Digite o nº da questão a ser excluida: "))
+    cursor.execute("DELETE FROM cursos WHERE id=?", (excluir))
+    conexao.commit()
+    print("Curso excluída com sucesso.")
+
+# Editar cursos
+def editar_curso():
+    ver_cursos()
+    tipo_alterar=input("Digite o que deseja alterar: ")
+    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))-1
+    alteracao=input("Digite a alteração da questão: ")
+    cursor.execute("UPDATE cursos SET ? WHERE ?=?", (alteracao, tipo_alterar, indice_alterar))
+
 # Ver os módulos disponíveis
 def ver_modulos(curso_selecionado,):
     cursor.execute("SELECT * FROM modulos WHERE id_curso=?", (curso_selecionado,))
     modulos=cursor.fetchall()
     for linha in modulos:
         print(linha)
+
+# Criar modulo
+def criar_modulo():
+    ver_cursos()
+    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    nome=input("Digite o nome do módulo: ")
+
+    cursor.execute('''
+        INSERT INTO modulos(id_curso, nome_modulo)
+        VALUES (?, ?)
+    ''', (id_curso, nome))
+    conexao.commit()
+    conexao.close()
+
+# Excluir modulo
+def excluir_modulo():
+    ver_modulos()
+    excluir=int(input("Digite o nº da questão a ser excluida: "))
+    cursor.execute("DELETE FROM modulos WHERE id_atividade=?", (excluir))
+    conexao.commit()
+    print("Módulo excluída com sucesso.")
+
+# Editar modulo
+def editar_modulo():
+    ver_modulos()
+    tipo_alterar=input("Digite o que deseja alterar: ")
+    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))-1
+    alteracao=input("Digite a alteração da questão: ")
+    cursor.execute("UPDATE modulos SET ? WHERE ?=?", (alteracao, tipo_alterar, indice_alterar))
 
 # Entrar no curso e no módulo
 def entrar_curso_modulo():
@@ -94,8 +163,10 @@ def entrar_curso_modulo():
     selecao_modulo=int(input("Digite o identificador (ID) do módulo que deseja entrar: "))
     print(f"O módulo '{selecao_modulo}' foi selecionado com sucesso!")
 
+# Criar atividades
 def criar_atividade():
     selecao_modulo, selecao_curso=entrar_curso_modulo()
+    print(f"Você está no curso {selecao_curso} e módulo {selecao_modulo}.")
     # Adicionar atividades
     tipo=input("Digite o tipo de atividade: ")
     questão=input("Digite o enunciado da atividade: ")
