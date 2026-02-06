@@ -5,19 +5,20 @@ cursor=conexao.cursor()
 
 # Alterar tabela 'atividades' para receber opções
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS atividades(
+    CREATE TABLE IF NOT EXISTS atividades(
         id_atividade INTEGER PRIMARY KEY AUTOINCREMENT,
         id_modulo INTEGER NOT NULL,
-        id_cursos INTEGER NOT NULL,
+        id_curso INTEGER NOT NULL,
         tipo TEXT NOT NULL,
-        perguntas TEXT NOT NULL,
+        pergunta TEXT NOT NULL,
         opcao_a TEXT NOT NULL,
         opcao_b TEXT NOT NULL,
         opcao_c TEXT NOT NULL,
         opcao_d TEXT NOT NULL,
-        respostas TEXT NOT NULL,
+        resposta TEXT NOT NULL,
         dica TEXT NOT NULL,
         pontucao BOOL NOT NULL
+        FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
         FOREIGN KEY (id_modulo) REFERENCES modulo(id)
     );
 ''')
@@ -78,7 +79,7 @@ def ver_cursos():
 
 # Ver os módulos disponíveis
 def ver_modulos(curso_selecionado):
-    cursor.execute("SELECT * FROM modulos WHERE id=?", (curso_selecionado))
+    cursor.execute("SELECT * FROM modulos WHERE id_curso=?", (curso_selecionado))
     modulos=cursor.fetchall()
     for linha in modulos:
         print(linha)
