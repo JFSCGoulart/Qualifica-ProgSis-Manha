@@ -133,6 +133,6 @@ def excluir_atividade():
 def editar_atividade():
     ver_atividades()
     tipo_alterar=input("Digite o que deseja alterar: ")
-    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))
+    indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))-1
     alteracao=input("Digite a alteração da questão: ")
     cursor.execute("UPDATE atividades SET ? WHERE ?=?", (alteracao, tipo_alterar, indice_alterar))
