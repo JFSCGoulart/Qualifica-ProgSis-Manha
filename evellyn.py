@@ -95,6 +95,8 @@ def entrar_curso_modulo():
     selecao_modulo=int(input("Digite o identificador (ID) do módulo que deseja entrar: "))
     print(f"O módulo '{selecao_modulo}' foi selecionado com sucesso!")
 
+def criar_atividade():
+    selecao_modulo, selecao_curso=entrar_curso_modulo()
     # Adicionar atividades
     tipo=input("Digite o tipo de atividade: ")
     questão=input("Digite o enunciado da atividade: ")
@@ -136,3 +138,79 @@ def editar_atividade():
     indice_alterar=int(input("Digite o indíce onde a alteração deve ocorrer alteração: "))-1
     alteracao=input("Digite a alteração da questão: ")
     cursor.execute("UPDATE atividades SET ? WHERE ?=?", (alteracao, tipo_alterar, indice_alterar))
+
+# Menu de curso - integrado com menu de professor
+def menu_curso():
+    print("\n>>> CURSOS <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_curso=int(input("Escolha uma opção: "))
+    match selecao_curso:
+        case 1:
+            ver_cursos()
+        case 2:
+            criar_curso()
+        case 3:
+            editar_curso()
+        case 4:
+            excluir_curso()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
+
+# Menu de módulo - integrado com menu de professor
+def menu_modulo():
+    print("\n>>> MODULOS <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_modulo=int(input("Escolha uma opção: "))
+    match selecao_modulo:
+        case 1:
+            ver_modulos()
+        case 2:
+            criar_modulo()
+        case 3:
+            editar_modulo()
+        case 4:
+            excluir_modulo()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
+
+# Menu de atividades - integrado com menu de professor
+def menu_atividade():
+    print("\n>>> ATIVIDADES <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_atividade=int(input("Escolha uma opção: "))
+    match selecao_atividade:
+        case 1:
+            ver_atividades()
+        case 2:
+            criar_atividade()
+        case 3:
+            editar_atividade()
+        case 4:
+            excluir_atividade()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
+
+# Menu de redirecionamento do professor - main.py
+def menu_professor(nome):
+    print(f"\n>>> PAINEL DO PROFESSOR: {nome}")
+    print("[ 1 ] -->  Curso")
+    print("[ 2 ] -->  Módulo")
+    print("[ 3 ] -->  Atividade")
+    selecao=int(input("Selecione uma opção: "))
+    while True:
+        match selecao:
+            case 1:
+                menu_curso()
+            case 2:
+                menu_modulo()
+            case 3:
+                menu_atividade()
