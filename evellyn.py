@@ -57,14 +57,33 @@ class Usuario:
 def menu_aluno(nome):
     print(f"\n>>> PAINEL DO ALUNO: {nome}")
     input("Funcionalidades em breve... Enter para sair.")
+    # O aluno utiliza o sistema para acessar cursos e módulos disponíveis, realizar atividades
+    # educacionais, acompanhar seu progresso individual, visualizar pontuações, estrelas e rankings.
 
 def menu_professor(nome):
     print(f"\n>>> PAINEL DO PROFESSOR: {nome}")
     input("Funcionalidades em breve... Enter para sair.")
+    # O professor é responsável pelo cadastro, edição e gerenciamento dos cursos, módulos e
+    # atividades educacionais. Cabe a este perfil definir os conteúdos, tipos de atividades, enunciados,
+    # opções de resposta e respostas corretas.
 
 def menu_coordenador(nome):
     print(f"\n>>> PAINEL DO COORDENADOR: {nome}")
-    input("Funcionalidades em breve... Enter para sair.")
+    print("[ 1 ] --> Indicadores Gerais de desempenho")
+    print("[ 2 ] --> Consultar Relatórios")
+    print("[ 3 ] --> Vizualizar Ranking")
+    acompanhar=int(input("Escolha uma opção: "))
+    match acompanhar:
+        case 1:
+            pass
+        case 2:
+            pass
+        case 3:
+            get_ranking()
+        case _:
+            print("[!] Página não encontrada.")
+    # O coordenador utiliza o sistema para acompanhar indicadores gerais de desempenho da
+    # turma, consultar relatórios consolidados e visualizar rankings completos.
 
 # --- 4. Lógica de Navegação ---
 
