@@ -46,7 +46,7 @@ Erros: {self.erros}
 Puladas: {self.puladas}
 Dicas usadas: {self.dicas}
 Penalidade: {self.penalidade}
-Pontos finais: {self.pontos}
+Total de pontos: {self.pontos}
 """)
 
 # parte do banco de dados abaixo
