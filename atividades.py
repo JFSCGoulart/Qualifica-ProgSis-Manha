@@ -293,7 +293,7 @@ def mini_cenarios():
     ''', (dados['id_modulo'], dados['id_curso'], cenario, tipo, decisao_a, decisao_b, decisao_c, decisao_d, resposta, dica))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
-    
+
 # Ver as atividades
 def ver_atividades():
     cursor.execute("SELECT * FROM atividades")
@@ -358,7 +358,7 @@ def editar_atividade():
     else:
         print("[!] Opção inválida.")
 
-# Fechar conexão (menu principal após break)
+# Fechar conexão com o banco de dados
 def fechar_conexao():
     conexao.close()
 
