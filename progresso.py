@@ -102,3 +102,4 @@ class HistoricoDB:
         with self._conectar() as conn:
             return conn.execute("SELECT * FROM historico").fetchall()
 
+# Feito por: João Gomes Peixoto
