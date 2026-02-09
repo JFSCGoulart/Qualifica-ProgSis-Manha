@@ -311,7 +311,7 @@ def editar_atividade():
     else:
         print("Opção inválida!")
 
-# Fechar conexão (menu principal após break)
+# Fechar conexão com o banco de dados
 def fechar_conexao():
     conexao.close()
 
