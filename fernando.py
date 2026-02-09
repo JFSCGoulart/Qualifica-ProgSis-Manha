@@ -1,4 +1,4 @@
- import sqlite3
+import sqlite3
 
 # ===============================
 # CONEXÃO COM O BANCO
