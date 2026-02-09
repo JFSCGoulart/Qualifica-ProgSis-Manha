@@ -217,7 +217,7 @@ def correspondecia ():
     dica=input("Digite a dica: ")
     cursor.execute('''
         INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, coluna_1, coluna_2, pares, resposta, dica)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (dados['id_modulo'], dados['id_curso'], pergunta, tipo, coluna_1, coluna_2, pares, resposta, dica,))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
@@ -268,7 +268,7 @@ def escolha_multipla():
     dica=input("Digite a dica: ") 
     cursor.execute('''
         INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, opcao_a, opcao_b, opcao_c, opcao_d, resposta ,dica)
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (dados['id_modulo'], dados['id_curso'], pergunta, tipo, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
@@ -292,7 +292,7 @@ def palavra_embaralhada():
     dica=input("Digite a dica: ") 
     cursor.execute('''
         INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, embaralhada, resposta, dica)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (dados['id_modulo'], dados['id_curso'], perguntas, tipo, embaralhada, resposta, dica))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
