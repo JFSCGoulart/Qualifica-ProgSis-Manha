@@ -136,36 +136,6 @@ def entrar_curso_modulo():
         'nome_modulo':nome_modulo
     }
 
-# Criar atividades
-def criar_atividade():
-    dados=entrar_curso_modulo()
-
-    if dados is None:
-        print("Operação cancelada.")
-        return
-
-    print(f"\n Você está em:")
-    print(f"   Curso: {dados['nome_curso']} (ID: {dados['id_curso']})")
-    print(f"   Módulo: {dados['nome_modulo']} (ID: {dados['id_modulo']})\n")
-    
-    # Adicionar atividades
-    tipo=input("Digite o tipo de atividade: ")
-    questão=input("Digite o enunciado da atividade: ")
-    opcao_a=input("Digite a opção 'A': ")
-    opcao_b=input("Digite a opção 'B': ")
-    opcao_c=input("Digite a opção 'C': ")
-    opcao_d=input("Digite a opção 'D': ")
-    resposta=input("Digite a resposta correta: ").upper()
-    dica=input("Digite a dica: ")
-    
-    # Inserir a atividade
-    cursor.execute('''
-        INSERT INTO atividades(id_modulo, id_curso, tipo, pergunta, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (dados['id_modulo'], dados['id_curso'], tipo, questão, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica))
-    conexao.commit()
-    print(f"Atividade de {tipo} adicionada com sucesso!")
-
 # Múltipla escolha
 def multipla_escolha():
     dados=entrar_curso_modulo()
@@ -196,7 +166,7 @@ def multipla_escolha():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# Correspondência (ligar colunas) 
+#o Correspondência (ligar colunas) 
 def correspondecia ():
     dados=entrar_curso_modulo()
 
@@ -222,7 +192,7 @@ def correspondecia ():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# Classificação (separar categorias)
+# o Classificação (separar categorias)
 def classificacao ():
     dados=entrar_curso_modulo()
 
@@ -240,13 +210,13 @@ def classificacao ():
     resposta =input("Digite os itens para relacionar (Ex: 4 , 45 , 3.4) : ")
     dica = input("Digite a dica: ")
     cursor.execute('''
-        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, categoria, resposta, dica)
+        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, categorias, resposta, dica)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (dados['id_modulo'], dados['id_curso'],perguntas, tipo, categorias, resposta, dica))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# Escolha múltipla (várias corretas)
+#o Escolha múltipla (várias corretas)
 def escolha_multipla():
     dados=entrar_curso_modulo()
 
@@ -273,7 +243,7 @@ def escolha_multipla():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# Palavra embaralhada
+#o Palavra embaralhada
 def palavra_embaralhada():
     dados=entrar_curso_modulo()
 
@@ -285,9 +255,9 @@ def palavra_embaralhada():
     print(f"   Curso: {dados['nome_curso']} (ID: {dados['id_curso']})")
     print(f"   Módulo: {dados['nome_modulo']} (ID: {dados['id_modulo']})\n")
 
+    embaralhada = input("Digite a palavra embaralhada: ")
     perguntas = f"Desembralhe a palavra {embaralhada}: "
     tipo="Palavra Embaralhada"
-    embaralhada = input("Digite a palavra embaralhada: ")
     resposta = input("Digite a palavra correta: ")
     dica=input("Digite a dica: ") 
     cursor.execute('''
@@ -297,7 +267,7 @@ def palavra_embaralhada():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# Mini-cenários com decisões
+#o Mini-cenários com decisões
 def mini_cenarios():
     dados=entrar_curso_modulo()
 
@@ -311,16 +281,19 @@ def mini_cenarios():
     
     cenario=input("Digite o cénario : ")
     tipo="Mini-Cenários"
-    decisoes = input("Digite as decisões que o aluno pode tomar : ")
+    decisao_a = input("Digite a decisão que o aluno pode tomar: ")
+    decisao_b = input("Digite as decisões que o aluno pode tomar : ")
+    decisao_c = input("Digite as decisões que o aluno pode tomar : ")
+    decisao_d = input("Digite as decisões que o aluno pode tomar : ")
     resposta=input("Digite a decisão certa : ")
     dica=input("Digite a dica: ")
     cursor.execute('''
-        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, decisoes, resposta, dica)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (dados['id_modulo'], dados['id_curso'], cenario, tipo, decisoes, resposta, dica))
+        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, opcao_a, opcao_b, opcao_c, opcao_d, resposta, dica)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (dados['id_modulo'], dados['id_curso'], cenario, tipo, decisao_a, decisao_b, decisao_c, decisao_d, resposta, dica))
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
-
+    
 # Ver as atividades
 def ver_atividades():
     cursor.execute("SELECT * FROM atividades")
