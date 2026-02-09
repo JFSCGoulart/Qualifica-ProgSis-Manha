@@ -52,6 +52,26 @@ def editar_curso():
     conexao.commit()
     print("Curso atualizado com sucesso!")
 
+# Menu de curso - integrado com menu de professor
+def menu_curso():
+    print("\n>>> CURSOS <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_curso=int(input("Escolha uma opção: "))
+    match selecao_curso:
+        case 1:
+            ver_cursos()
+        case 2:
+            criar_curso()
+        case 3:
+            editar_curso()
+        case 4:
+            excluir_curso()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
+
 # Ver os módulos disponíveis
 def ver_modulos(curso_selecionado,):
     cursor.execute("SELECT * FROM modulos WHERE id_curso=?", (curso_selecionado,))
@@ -69,7 +89,19 @@ def ver_modulos(curso_selecionado,):
     ''', (id_curso, nome))
     conexao.commit()
 
-# Excluir modulo
+# Criar módulo
+def criar_modulo():
+    ver_cursos()
+    id_curso=int(input("Digite o identificador (ID) do curso: "))
+    nome=input("Digite o nome do módulo: ")
+
+    cursor.execute('''
+        INSERT INTO modulos(id_curso, nome_modulo)
+        VALUES (?, ?)
+    ''', (id_curso, nome))
+    conexao.commit()
+
+# Excluir módulo
 def excluir_modulo():
     ver_modulos()
     excluir=int(input("Digite o nº da questão a ser excluida: "))
@@ -77,7 +109,7 @@ def excluir_modulo():
     conexao.commit()
     print("Módulo excluída com sucesso.")
 
-# Editar modulo
+# Editar módulo
 def editar_modulo():
     ver_modulos()
     id_modulo=int(input("Digite o ID do módulo que deseja editar: "))
@@ -100,6 +132,26 @@ def editar_modulo():
     
     conexao.commit()
     print("Módulo atualizado com sucesso!")
+
+# Menu de módulo - integrado com menu de professor
+def menu_modulo():
+    print("\n>>> MODULOS <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_modulo=int(input("Escolha uma opção: "))
+    match selecao_modulo:
+        case 1:
+            ver_modulos()
+        case 2:
+            criar_modulo()
+        case 3:
+            editar_modulo()
+        case 4:
+            excluir_modulo()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
 
 # Entrar no curso e no módulo
 def entrar_curso_modulo():
@@ -166,7 +218,7 @@ def multipla_escolha():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-#o Correspondência (ligar colunas) 
+# Correspondência (ligar colunas) 
 def correspondecia ():
     dados=entrar_curso_modulo()
 
@@ -192,7 +244,7 @@ def correspondecia ():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-# o Classificação (separar categorias)
+# Classificação (separar categorias)
 def classificacao ():
     dados=entrar_curso_modulo()
 
@@ -216,7 +268,7 @@ def classificacao ():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-#o Escolha múltipla (várias corretas)
+# Escolha múltipla (várias corretas)
 def escolha_multipla():
     dados=entrar_curso_modulo()
 
@@ -243,7 +295,7 @@ def escolha_multipla():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-#o Palavra embaralhada
+# Palavra embaralhada
 def palavra_embaralhada():
     dados=entrar_curso_modulo()
 
@@ -267,7 +319,7 @@ def palavra_embaralhada():
     conexao.commit()
     print(f"Atividade de {tipo} adicionada com sucesso!")
 
-#o Mini-cenários com decisões
+# Mini-cenários com decisões
 def mini_cenarios():
     dados=entrar_curso_modulo()
 
@@ -358,10 +410,7 @@ def editar_atividade():
     else:
         print("[!] Opção inválida.")
 
-# Fechar conexão com o banco de dados
-def fechar_conexao():
-    conexao.close()
-
+# Integração de todos os tipos de atividades
 def criar_atividade():
     while True:
         print("Qual tipo de atividade deseja add:")
@@ -392,3 +441,27 @@ def criar_atividade():
                 break
             case _:
                 print("[!] Opção inválida.")
+
+# Menu de atividades - integrado com menu de professor
+def menu_atividade():
+    print("\n>>> ATIVIDADES <<<")
+    print("[ 1 ] --> Ver")
+    print("[ 2 ] --> Adicionar")
+    print("[ 3 ] --> Editar")
+    print("[ 4 ] --> Excluir")
+    selecao_atividade=int(input("Escolha uma opção: "))
+    match selecao_atividade:
+        case 1:
+            ver_atividades()
+        case 2:
+            criar_atividade()
+        case 3:
+            editar_atividade()
+        case 4:
+            excluir_atividade()
+        case _:
+            print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
+            
+# Fechar conexão com o banco de dados
+def fechar_conexao():
+    conexao.close()
