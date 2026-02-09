@@ -376,6 +376,8 @@ def menu_atividade():
             print("[!] Opção inválida. Tente novamente com um número entre '1' e '4'.")
 
 # Menu de redirecionamento do professor - main.py
+import atividades
+
 def menu_professor(nome):
     print(f"\n>>> PAINEL DO PROFESSOR: {nome}")
     print("[ 1 ] -->  Curso")
@@ -386,11 +388,11 @@ def menu_professor(nome):
     while True:
         match selecao:
             case 1:
-                menu_curso()
+                atividades.menu_curso()
             case 2:
-                menu_modulo()
+                atividades.menu_modulo()
             case 3:
-                menu_atividade()
+                atividades.menu_atividade()
             case 4:
                 print("Fechando programa...")
                 break
