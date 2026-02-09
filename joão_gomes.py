@@ -101,5 +101,35 @@ class HistoricoDB:
     def listar(self):
         with self._conectar() as conn:
             return conn.execute("SELECT * FROM historico").fetchall()
+db = HistoricoDB()
+
+jogo = QuizHistorico("João", "Python")
+
+jogo.responder(True)
+jogo.pontuar(10)
+
+jogo.responder(False)
+
+jogo.responder(True)
+jogo.pontuar(10)
+
+jogo.usar_dica()
+jogo.usar_dica()
+jogo.usar_dica()
+jogo.usar_dica()
+
+jogo.aplicar_penalidade()
+jogo.exibir()
+
+db.salvar(jogo)
+
+
+
+
+
+
+
+
+
 
 # Feito por: João Gomes Peixoto
