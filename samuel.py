@@ -3,7 +3,7 @@ import datetime
 
 def sistema_ranking(db_nome="ranking.db"):
     """
-    Sistema de ranking integrado com SQLite3
+    Sistema de ranking 
     Parâmetros:
     db_nome (str): Nome do arquivo do banco de dados
     Retorna:
