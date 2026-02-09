@@ -21,7 +21,7 @@ def criar_curso():
     ''', (nome, descricao))
     conexao.commit()
     
-# Exluir cursos
+# Excluir curso
 def excluir_curso():
     ver_cursos()
     excluir=int(input("Digite o nº da questão a ser excluida: "))
@@ -29,7 +29,7 @@ def excluir_curso():
     conexao.commit()
     print("Curso excluída com sucesso.")
 
-# Editar cursos
+# Editar curso
 def editar_curso():
     ver_cursos()
     id_curso=int(input("Digite o ID do curso que deseja editar: "))
