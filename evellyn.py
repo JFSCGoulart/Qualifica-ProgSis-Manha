@@ -29,8 +29,9 @@ def criar_tabelas():
             id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
             nome_completo TEXT NOT NULL,
             data_nascimento DATE NOT NULL,
-            CPF INTEGER NOT NULL,
-            telefone INTEGER NOT NULL,
+            CPF VARCHAR(11) NOT NULL UNIQUE,
+            telefone VARCHAR(11) NOT NULL UNIQUE,
+            e-mail TEXT NOT NULL UNIQUE,
             id_tipo_usuario VARCHAR NOT NULL,
             senha TEXT NOT NULL,   
             tipo TEXT NOT NULL CHECK (tipo IN ('aluno', 'professor', 'coordenador'))
