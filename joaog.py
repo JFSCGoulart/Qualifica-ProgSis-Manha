@@ -1,1 +1,0 @@
-print("João Goulart")
