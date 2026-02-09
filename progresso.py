@@ -1,79 +1,104 @@
+import sqlite3
 from datetime import datetime
 
 PENALIDADE_POR_DICA = 5
 
+class QuizHistorico:
+    def __init__(self, player, tema):
+        self.player = player
+        self.tema = tema
+        self.data = datetime.now().strftime("%d/%m/%Y %H:%M") #data atual
+        self.perguntas = 0
+        self.acertos = 0
+        self.erros = 0
+        self.puladas = 0
+        self.pontos = 0
+        self.dicas = 0
+        self.penalidade = 0
 
-def criar_historico(player, tema):
-    return {
-        "player": player,
-        "tema": tema,
-        "data": datetime.now().strftime("%d/%m/%Y %H:%M"),
-        "perguntas": 0,
-        "acertos": 0,
-        "erros": 0,
-        "puladas": 0,
-        "pontos": 0,
-        "dicas": 0,
-        "penalidade": 0
-    }
+    def responder(self, correta: bool): #(pontuação)
+        self.perguntas += 1
+        if correta:
+            self.acertos += 1
+        else:
+            self.erros += 1
 
+    def pontuar(self, pontos: int):
+        self.pontos += pontos
 
-def responder(h, correta):
-    h["perguntas"] += 1
-    h["acertos"] += correta
-    h["erros"] += not correta
+    def usar_dica(self):
+        self.dicas += 1
 
+    def aplicar_penalidade(self):
+        excesso = max(0, self.dicas - 3)
+        self.penalidade = excesso * PENALIDADE_POR_DICA
+        self.pontos = max(0, self.pontos - self.penalidade)
 
-def pontuar(h, pontos):
-    h["pontos"] += pontos
-
-
-def dica(h):
-    h["dicas"] += 1
-
-
-def aplicar_penalidade(h):
-    excesso = max(0, h["dicas"] - 3)
-    h["penalidade"] = excesso * PENALIDADE_POR_DICA
-    h["pontos"] = max(0, h["pontos"] - h["penalidade"])
-
-
-def mostrar(h):
-    print(f"""
-player: {h['player']}
-Tema: {h['tema']}
-Data: {h['data']}
+    def exibir(self):
+        print(f"""
+player: {self.player}
+Tema: {self.tema}
+Data: {self.data}
 -------------------------
-Perguntas: {h['perguntas']}
-Acertos: {h['acertos']}
-Erros: {h['erros']}
-Puladas: {h['puladas']}
-Dicas usadas: {h['dicas']}
-Penalidade: {h['penalidade']}
-Pontos finais: {h['pontos']}
+Perguntas: {self.perguntas}
+Acertos: {self.acertos}
+Erros: {self.erros}
+Puladas: {self.puladas}
+Dicas usadas: {self.dicas}
+Penalidade: {self.penalidade}
+Pontos finais: {self.pontos}
 """)
-    
-h = criar_historico("Epstein", "Video Games")
 
-# Pergunta 1 – correta
-responder(h, True)
-pontuar(h, 10)
+# parte do banco de dados abaixo
+import sqlite3
 
-# Pergunta 2 – errada
-responder(h, False)
+class HistoricoDB:
+    def __init__(self, arquivo="historico_quiz.db"):
+        self.arquivo = arquivo
+        self._criar_tabela()
 
-# Pergunta 3 – correta
-responder(h, True)
-pontuar(h, 10)
+    def _conectar(self):
+        return sqlite3.connect(self.arquivo)
 
-# Usa dicas
-dica(h)
-dica(h)
-dica(h)
-dica(h)   # aqui vai começar a dar merda (penalidade)
+    def _criar_tabela(self):
+        with self._conectar() as conn:
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS historico (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                player TEXT,
+                tema TEXT,
+                data TEXT,
+                perguntas INTEGER,
+                acertos INTEGER,
+                erros INTEGER,
+                puladas INTEGER,
+                pontos INTEGER,
+                dicas INTEGER,
+                penalidade INTEGER
+            )
+            """)
 
-# Aplica penalidade no final
-aplicar_penalidade(h)
+    def salvar(self, h: QuizHistorico):
+        with self._conectar() as conn:
+            conn.execute("""
+            INSERT INTO historico (
+                player, tema, data, perguntas, acertos, erros,
+                puladas, pontos, dicas, penalidade
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                h.player,
+                h.tema,
+                h.data,
+                h.perguntas,
+                h.acertos,
+                h.erros,
+                h.puladas,
+                h.pontos,
+                h.dicas,
+                h.penalidade
+            ))
 
-# Mostra resultado
-mostrar(h)
+    def listar(self):
+        with self._conectar() as conn:
+            return conn.execute("SELECT * FROM historico").fetchall()
+
