@@ -240,7 +240,7 @@ def classificacao ():
     resposta =input("Digite os itens para relacionar (Ex: 4 , 45 , 3.4) : ")
     dica = input("Digite a dica: ")
     cursor.execute('''
-        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, categorias, resposta, dica)
+        INSERT INTO atividades(id_curso, id_modulo, pergunta, tipo, categoria, resposta, dica)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ''', (dados['id_modulo'], dados['id_curso'],perguntas, tipo, categorias, resposta, dica))
     conexao.commit()
@@ -348,8 +348,14 @@ def editar_atividade():
     print("[ 4 ] --> Opção B")
     print("[ 5 ] --> Opção C")
     print("[ 6 ] --> Opção D")
-    print("[ 7 ] --> Resposta")
-    print("[ 8 ] --> Dica")
+    print("[ 7 ] --> Coluna 1")
+    print("[ 8 ] --> Coluna 2")
+    print("[ 9 ] --> Pares")
+    print("[ 10 ] --> Categoria")
+    print("[ 11 ] --> Embaralhada")
+    print("[ 12 ] --> Cenário")
+    print("[ 13 ] --> Resposta")
+    print("[ 14 ] --> Dica")
     opcao=input("Escolha: ")
     
     alteracao=input("Digite a nova informação: ")
@@ -361,8 +367,14 @@ def editar_atividade():
         "4": "opcao_b",
         "5": "opcao_c",
         "6": "opcao_d",
-        "7": "resposta",
-        "8": "dica"
+        "7": "coluna_1",
+        "8": "coluna_2",
+        "9": "pares",
+        "10": "categoria",
+        "11": "embaralhada",
+        "12": "cenario",
+        "13": "resposta",
+        "14": "dica"
     }
     
     if opcao in campos:
@@ -371,7 +383,7 @@ def editar_atividade():
         conexao.commit()
         print("Atividade atualizada com sucesso!")
     else:
-        print("Opção inválida!")
+        print("[!] Opção inválida.")
 
 # Fechar conexão (menu principal após break)
 def fechar_conexao():
