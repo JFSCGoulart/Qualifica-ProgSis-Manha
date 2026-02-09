@@ -381,6 +381,7 @@ def menu_professor(nome):
     print("[ 1 ] -->  Curso")
     print("[ 2 ] -->  Módulo")
     print("[ 3 ] -->  Atividade")
+    print("[ 4 ] --> sair")
     selecao=int(input("Selecione uma opção: "))
     while True:
         match selecao:
@@ -390,3 +391,8 @@ def menu_professor(nome):
                 menu_modulo()
             case 3:
                 menu_atividade()
+            case 4:
+                print("Fechando programa...")
+                break
+            case _:
+                print("[!] Opção inválida.")
