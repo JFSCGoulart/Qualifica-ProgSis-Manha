@@ -167,13 +167,16 @@ class SistemaRanking:
         with self.conectar() as conn:
             cursor = conn.cursor()
             
-            cursor.execute('SELECT COUNT(*) FROM ranking')
+            cursor.execute
+            ('SELECT COUNT(*) FROM ranking')
             total = cursor.fetchone()[0]
             
-            cursor.execute('SELECT AVG(pontuacao) FROM ranking')
+            cursor.execute
+            ('SELECT AVG(pontuacao) FROM ranking')
             media = round(cursor.fetchone()[0] or 0, 2)
             
-            cursor.execute('SELECT MAX(pontuacao) FROM ranking')
+            cursor.execute
+            ('SELECT MAX(pontuacao) FROM ranking')
             maximo = cursor.fetchone()[0] or 0
             
             cursor.execute('SELECT usuario, pontuacao FROM ranking ORDER BY pontuacao DESC LIMIT 1')
