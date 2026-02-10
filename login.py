@@ -1,6 +1,5 @@
 import sqlite3
-
-import sqlite3
+import profatividades
 
 # --- 1. Camada de Dados ---
 class Database:
@@ -78,7 +77,25 @@ def menu_aluno(nome):
 
 def menu_professor(nome):
     print(f"\n>>> PAINEL DO PROFESSOR: {nome}")
-    input("Pressione Enter para sair.")
+    print("[ 1 ] -->  Curso")
+    print("[ 2 ] -->  Módulo")
+    print("[ 3 ] -->  Atividade")
+    print("[ 4 ] --> sair")
+    selecao=int(input("Selecione uma opção: "))
+    while True:
+        match selecao:
+            case 1:
+                profatividades.menu_curso()
+            case 2:
+                profatividades.menu_modulo()
+            case 3:
+                profatividades.menu_atividade()
+            case 4:
+                print("Fechando programa...")
+                profatividades.fechar_conexao()
+                break
+            case _:
+                print("[!] Opção inválida.")
 
 def menu_coordenador(nome):
     print(f"\n>>> PAINEL DO COORDENADOR: {nome}")
