@@ -169,12 +169,6 @@ def jogar():
     nome = input("Digite seu nome: ")
     aluno = Aluno(nome)
 
-    perguntas = [
-        Pergunta("Python é uma linguagem? (S para SIM/N para N)", "S"),
-        Pergunta("HTML é linguagem de programação? (S para SIM/N para N)", "N"),
-        Pergunta("SQLite precisa de internet? (S para SIM/N para N)", "N"),
-        Pergunta("Para imprimir algo, precisa do PRINT (S para SIM/N para N)", "S"),
-    ]
 
     historico = QuizHistorico(aluno, "Programação")
 
