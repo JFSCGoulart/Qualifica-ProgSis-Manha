@@ -1,1 +1,0 @@
-print("Samuel de oliveira Evangelista")
