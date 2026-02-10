@@ -46,28 +46,20 @@ def criar_tabelas():
             id_curso INTEGER NOT NULL,
             tipo TEXT NOT NULL,
             pergunta TEXT NOT NULL,
-            opcao_a TEXT NOT NULL,
-            opcao_b TEXT NOT NULL,
-            opcao_c TEXT NOT NULL,
-            opcao_d TEXT NOT NULL,
+            opcao_a TEXT,
+            opcao_b TEXT,
+            opcao_c TEXT,
+            opcao_d TEXT,
+            coluna_1 TEXT,
+            coluna_2 TEXT,
+            pares TEXT,
+            categoria TEXT,
+            embaralhada TEXT,
+            cenario TEXT,
             resposta TEXT NOT NULL,
             dica TEXT NOT NULL,
             FOREIGN KEY (id_curso) REFERENCES cursos(id_curso),
             FOREIGN KEY (id_modulo) REFERENCES modulos(id_modulo)
-        );
-    ''')
-
-    # Tabela para outras opções
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS opcoes(
-            id_opcoes INTEGER PRIMARY KEY UNIQUE AUTOINCREMENT,
-            id_atividade INTEGER NOT NULL,
-            coluna_1 TEXT NOT NULL,
-            coluna_2 TEXT NOT NULL,
-            pares TEXT NOT NULL,
-            categorias TEXT NOT NULL,
-            embaralhada TEXT NOT NULL,
-            FOREIGN KEY (id_atividade) REFERENCES atividades(id_atividade)
         );
     ''')
     
