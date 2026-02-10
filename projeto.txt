@@ -1,0 +1,84 @@
+ Vou criar uma interface web completa em HTML/CSS/JavaScript para o seu sistema educacional. Como não posso criar arquivos diretamente, vou fornecer o código completo e bem estruturado.
+
+## Estrutura de Arquivos
+
+```
+sistema_educacional_web/
+├── templates/
+│   ├── base.html
+│   ├── login.html
+│   ├── cadastro.html
+│   ├── aluno/
+│   │   ├── dashboard.html
+│   │   ├── cursos.html
+│   │   ├── atividade.html
+│   │   ├── progresso.html
+│   │   └── ranking.html
+│   ├── professor/
+│   │   ├── dashboard.html
+│   │   ├── cursos.html
+│   │   └── atividades.html
+│   └── coordenador/
+│       ├── dashboard.html
+│       ├── ranking.html
+│       └── relatorios.html
+├── static/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── app.js
+└── app.py (backend Flask)
+```
+
+
+## 2. Templates HTML
+
+### `templates/base.html`
+
+```html
+
+```
+
+
+
+
+
+
+
+### `templates/coordenador/relatorios.html`
+
+```html
+
+```
+
+## Como Executar
+
+1. **Instale as dependências**:
+   ```bash
+   pip install flask
+   ```
+
+2. **Crie a estrutura de pastas**:
+   ```
+   mkdir -p templates/aluno templates/professor templates/coordenador static/css static/js
+   ```
+
+3. **Salve os arquivos** nas respectivas pastas
+
+4. **Execute o sistema**:
+   ```bash
+   python app.py
+   ```
+
+5. **Acesse no navegador**: `http://localhost:5000`
+
+## Funcionalidades da Interface Web ✅
+
+- **Design moderno e responsivo** com Bootstrap 5
+- **Animações e efeitos visuais** (confetes ao acertar, transições suaves)
+- **Dashboards específicos** para cada tipo de usuário
+- **Gráficos de progresso** visuais
+- **Sistema de ranking** com medalhas
+- **Modais para cadastro** rápido
+- **Totalmente responsivo** para mobile
+- **Feedback visual** imediato (alertas, badges, cores)

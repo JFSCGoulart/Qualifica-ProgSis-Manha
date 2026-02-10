@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Cursos - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="bi bi-journal-text me-2"></i>Cursos</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCurso">
+            <i class="bi bi-plus-lg me-2"></i>Novo Curso
+        </button>
+    </div>
+</div>
+
+<div class="row">
+    {% for curso in cursos %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ curso.nome }}</h5>
+                <p class="text-muted small">
+                    <i class="bi bi-calendar me-1"></i>
+                    Criado em {{ curso.data_criacao[:10] }}
+                </p>
+                {% if curso.descricao %}
+                <p class="card-text">{{ curso.descricao }}</p>
+                {% endif %}
+                <span class="badge bg-info">
+                    <i class="bi bi-grid-3x3-gap me-1"></i>
+                    {{ curso.total_atividades }} atividades
+                </span>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+        <h4 class="mt-3 text-muted">Nenhum curso cadastrado</h4>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Novo Curso -->
+<div class="modal fade" id="modalCurso" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nome do Curso</label>
+                        <input type="text" class="form-control" name="nome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

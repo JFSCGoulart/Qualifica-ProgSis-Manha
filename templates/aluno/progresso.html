@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Progresso - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-graph-up me-2"></i>Meu Progresso</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card success text-center">
+            <div class="card-body">
+                <h1 class="display-4 mb-2">{{ stats.total or 0 }} ⭐</h1>
+                <p class="text-muted mb-0">Total de Estrelas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card info text-center">
+            <div class="card-body">
+                <h1 class="display-4 mb-2">{{ stats.total_atividades or 0 }}</h1>
+                <p class="text-muted mb-0">Atividades Feitas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card stat-card warning text-center">
+            <div class="card-body">
+                <h1 class="display-4 mb-2">
+                    {{ ((stats.acertos / stats.total_atividades * 100)|int) if stats.total_atividades > 0 else 0 }}%
+                </h1>
+                <p class="text-muted mb-0">Taxa de Acerto</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Histórico Recente</h5>
+            </div>
+            <div class="card-body p-0">
+                {% if historico %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Data</th>
+                                <th>Curso</th>
+                                <th>Atividade</th>
+                                <th>Resultado</th>
+                                <th>⭐</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in historico %}
+                            <tr>
+                                <td class="text-muted small">
+                                    {{ item.data_resposta[:10] }}
+                                </td>
+                                <td>{{ item.curso_nome }}</td>
+                                <td>{{ item.pergunta[:50] }}...</td>
+                                <td>
+                                    {% if item.acertou %}
+                                    <span class="badge bg-success"><i class="bi bi-check"></i> Acertou</span>
+                                    {% else %}
+                                    <span class="badge bg-danger"><i class="bi bi-x"></i> Errou</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ item.estrelas_ganhas }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">Nenhuma atividade feita ainda.</p>
+                    <a href="{{ url_for('aluno_atividade') }}" class="btn btn-primary">Começar Agora</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Por Curso</h5>
+            </div>
+            <div class="card-body">
+                {% if por_curso %}
+                {% for curso in por_curso %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold">{{ curso.nome }}</span>
+                        <span class="text-muted">{{ curso.media or 0 }}% acerto</span>
+                    </div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" style="width: {{ curso.media or 0 }}%"></div>
+                    </div>
+                    <small class="text-muted">{{ curso.acertos }}/{{ curso.total }} atividades</small>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted text-center">Complete atividades para ver estatísticas.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mt-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Zona de Perigo</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Resetar seu progresso apagará todo seu histórico e estrelas. Esta ação não pode ser desfeita!</p>
+                <form method="POST" action="{{ url_for('resetar_progresso') }}" onsubmit="return confirm('Tem certeza que deseja resetar TODO o seu progresso?');">
+                    <button type="submit" class="btn btn-outline-danger w-100">
+                        <i class="bi bi-trash me-2"></i>Resetar Progresso
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

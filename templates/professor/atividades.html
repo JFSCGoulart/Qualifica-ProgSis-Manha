@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Atividades - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="bi bi-file-earmark-text me-2"></i>Atividades</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAtividade">
+            <i class="bi bi-plus-lg me-2"></i>Nova Atividade
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Curso</th>
+                    <th>Pergunta</th>
+                    <th>Resposta</th>
+                    <th>Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for atv in atividades %}
+                <tr>
+                    <td>
+                        <span class="activity-type-badge">
+                            {{ atv.tipo.replace('_', ' ').title() }}
+                        </span>
+                    </td>
+                    <td>{{ atv.curso_nome }}</td>
+                    <td>{{ atv.pergunta[:50] }}{% if atv.pergunta|length > 50 %}...{% endif %}</td>
+                    <td><code>{{ atv.resposta_correta }}</code></td>
+                    <td class="text-muted small">{{ atv.data_criacao[:10] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        Nenhuma atividade cadastrada
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Nova Atividade -->
+<div class="modal fade" id="modalAtividade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nova Atividade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Curso</label>
+                            <select class="form-select" name="curso_id" required>
+                                <option value="">Selecione...</option>
+                                {% for curso in cursos %}
+                                <option value="{{ curso.id }}">{{ curso.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="tipo" id="tipoAtividade" required onchange="toggleOpcoes()">
+                                {% for valor, label in tipos %}
+                                <option value="{{ valor }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Pergunta / Enunciado</label>
+                        <textarea class="form-control" name="pergunta" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3" id="campoOpcoes">
+                        <label class="form-label">Opções (separadas por |)</label>
+                        <input type="text" class="form-control" name="opcoes" placeholder="Ex: Opção A|Opção B|Opção C">
+                        <div class="form-text">Obrigatório para múltipla escolha e correspondência</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Resposta Correta</label>
+                        <input type="text" class="form-control" name="resposta" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dica (opcional)</label>
+                        <input type="text" class="form-control" name="dica">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar Atividade</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleOpcoes() {
+    const tipo = document.getElementById('tipoAtividade').value;
+    const campo = document.getElementById('campoOpcoes');
+    const tiposComOpcoes = ['multipla_escolha', 'escolha_multipla', 'correspondencia'];
+    
+    if (tiposComOpcoes.includes(tipo)) {
+        campo.style.display = 'block';
+    } else {
+        campo.style.display = 'none';
+    }
+}
+toggleOpcoes();
+</script>
+{% endblock %}
