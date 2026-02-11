@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-icon" style="background: var(--success-gradient);">
+            <i class="bi bi-person-plus-fill"></i>
+        </div>
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-2">Criar Conta</h2>
+            <p class="text-muted">Escolha como deseja participar</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('cadastro') }}">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Nome de usuário</label>
+                <input type="text" class="form-control" name="nome" required placeholder="Escolha um nome único">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Senha</label>
+                <input type="password" class="form-control" name="senha" required placeholder="Crie uma senha segura">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Tipo de conta</label>
+                <div class="row g-2">
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="tipo" id="tipo_aluno" value="aluno" checked>
+                        <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center" for="tipo_aluno">
+                            <i class="bi bi-mortarboard fs-4 mb-1"></i>
+                            <small>Aluno</small>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="tipo" id="tipo_professor" value="professor">
+                        <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center" for="tipo_professor">
+                            <i class="bi bi-person-workspace fs-4 mb-1"></i>
+                            <small>Professor</small>
+                        </label>
+                    </div>
+                    <div class="col-4">
+                        <input type="radio" class="btn-check" name="tipo" id="tipo_coordenador" value="coordenador">
+                        <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center" for="tipo_coordenador">
+                            <i class="bi bi-person-badge fs-4 mb-1"></i>
+                            <small>Coordenador</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-success w-100 mb-4 py-3">
+                <i class="bi bi-check-circle me-2"></i>Criar Conta
+            </button>
+
+            <div class="text-center">
+                <a href="{{ url_for('login') }}" class="text-decoration-none text-muted">
+                    <i class="bi bi-arrow-left me-1"></i>Já tem conta? Faça login
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

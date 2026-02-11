@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Atividade - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% if atividade %}
+        <div class="card border-0" id="activityCard">
+            <div class="card-body p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <span class="activity-type-badge">
+                        <i class="bi bi-{{ 'check-square' if atividade.tipo == 'multipla_escolha' else 'patch-check' if atividade.tipo == 'verdadeiro_falso' else 'input-cursor' if atividade.tipo == 'preencher_lacunas' else 'arrow-down-up' if atividade.tipo == 'ordenar' else 'lightning' if atividade.tipo == 'sequencia_logica' else 'link-45deg' if atividade.tipo == 'correspondencia' else 'funnel' if atividade.tipo == 'classificacao' else 'check2-all' if atividade.tipo == 'escolha_multipla' else 'shuffle' if atividade.tipo == 'palavra_embaralhada' else 'controller' }} me-2"></i>
+                        {{ atividade.tipo.replace('_', ' ').title() }}
+                    </span>
+                    <span class="badge bg-light text-dark">
+                        <i class="bi bi-book me-1"></i>{{ atividade.curso_nome }}
+                    </span>
+                </div>
+
+                <h3 class="fw-bold mb-4" style="line-height: 1.6;">{{ atividade.pergunta }}</h3>
+
+                {% if atividade.opcoes %}
+                <div class="mb-4" id="opcoesContainer">
+                    {% set opcoes = atividade.opcoes.split('|') %}
+                    {% for opcao in opcoes %}
+                    <div class="form-check card mb-3 p-0 border-2" style="cursor: pointer; transition: all 0.3s;" 
+                         onclick="selectOption('{{ opcao }}')" 
+                         onmouseover="this.style.borderColor='#667eea'; this.style.transform='translateX(5px)';" 
+                         onmouseout="this.style.borderColor='#e5e7eb'; this.style.transform='translateX(0)';">
+                        <div class="card-body d-flex align-items-center p-3">
+                            <input class="form-check-input fs-5 m-0 me-3" type="radio" name="resposta" id="opt{{ loop.index }}" value="{{ opcao }}">
+                            <label class="form-check-label w-100 fw-semibold" for="opt{{ loop.index }}" style="cursor: pointer;">
+                                {{ opcao }}
+                            </label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="mb-4">
+                    <input type="text" class="form-control form-control-lg" id="respostaTexto" placeholder="Digite sua resposta aqui...">
+                </div>
+                {% endif %}
+
+                <div class="alert alert-info d-none rounded-3" id="dicaAlert" style="border-left: 4px solid #3b82f6;">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-lightbulb-fill text-warning fs-4 me-3"></i>
+                        <div>
+                            <strong>Dica:</strong> {{ atividade.dica }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert d-none rounded-3" id="resultadoAlert"></div>
+
+                <div class="d-flex justify-content-between align-items-center mt-4" id="actionButtons">
+                    <button class="btn btn-outline-info" onclick="mostrarDica()">
+                        <i class="bi bi-lightbulb me-2"></i>Pedir Dica
+                    </button>
+                    <button class="btn btn-primary btn-lg px-5" onclick="enviarResposta()">
+                        <i class="bi bi-check-circle me-2"></i>Enviar Resposta
+                    </button>
+                </div>
+
+                <div class="d-none" id="nextButtons">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ url_for('aluno_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house me-2"></i>Início
+                        </a>
+                        <button class="btn btn-success btn-lg px-5" onclick="proximaAtividade()">
+                            <i class="bi bi-arrow-right-circle me-2"></i>Próxima Atividade
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <form method="GET" action="{{ url_for('aluno_atividade') }}" class="d-inline-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm">
+                <i class="bi bi-funnel ms-3 text-muted"></i>
+                <select name="curso_id" class="form-select border-0 bg-transparent" style="width: auto; cursor: pointer;" onchange="this.form.submit()">
+                    <option value="">Todos os cursos</option>
+                    {% for curso in cursos %}
+                    <option value="{{ curso.id }}" {% if curso_selecionado == curso.id %}selected{% endif %}>
+                        {{ curso.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% else %}
+        <div class="card border-0 text-center py-5">
+            <div class="card-body p-5">
+                <div class="mb-4">
+                    <i class="bi bi-trophy-fill text-warning" style="font-size: 6rem;"></i>
+                </div>
+                <h2 class="fw-bold mb-3">Parabéns! 🎉</h2>
+                <p class="text-muted fs-5 mb-4">Você completou todas as atividades disponíveis!</p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{{ url_for('aluno_dashboard') }}" class="btn btn-outline-primary btn-lg">
+                        <i class="bi bi-house me-2"></i>Voltar ao Início
+                    </a>
+                    <a href="{{ url_for('aluno_ranking') }}" class="btn btn-warning btn-lg text-white">
+                        <i class="bi bi-trophy me-2"></i>Ver Ranking
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let usouDica = false;
+let atividadeId = {{ atividade.id if atividade else 'null' }};
+
+function selectOption(valor) {
+    document.querySelectorAll('input[name="resposta"]').forEach(el => {
+        el.checked = el.value === valor;
+        // Remove estilo ativo de todos
+        el.closest('.card').style.borderColor = '#e5e7eb';
+        el.closest('.card').style.background = 'white';
+    });
+    
+    // Adiciona estilo ao selecionado
+    const selecionado = document.querySelector(`input[value="${valor}"]`);
+    if (selecionado) {
+        selecionado.closest('.card').style.borderColor = '#667eea';
+        selecionado.closest('.card').style.background = 'rgba(102, 126, 234, 0.05)';
+    }
+}
+
+function mostrarDica() {
+    const dica = document.getElementById('dicaAlert');
+    dica.classList.remove('d-none');
+    dica.classList.add('fade-in');
+    usouDica = true;
+}
+
+function enviarResposta() {
+    let resposta = '';
+    const selecionado = document.querySelector('input[name="resposta"]:checked');
+    const texto = document.getElementById('respostaTexto');
+    
+    if (selecionado) {
+        resposta = selecionado.value;
+    } else if (texto) {
+        resposta = texto.value;
+    }
+    
+    if (!resposta.trim()) {
+        // Shake animation no campo
+        const card = document.getElementById('activityCard');
+        card.style.animation = 'shake 0.5s';
+        setTimeout(() => card.style.animation = '', 500);
+        return;
+    }
+
+    fetch('{{ url_for("aluno_atividade") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `atividade_id=${atividadeId}&resposta=${encodeURIComponent(resposta)}&usou_dica=${usouDica}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        const resultadoDiv = document.getElementById('resultadoAlert');
+        resultadoDiv.classList.remove('d-none', 'alert-success', 'alert-danger');
+        
+        if (data.acertou) {
+            resultadoDiv.classList.add('alert-success');
+            resultadoDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill fs-1 me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Parabéns! Resposta correta!</h5>
+                        <p class="mb-0">Você ganhou +1 ⭐</p>
+                    </div>
+                </div>
+            `;
+            createConfetti();
+        } else {
+            resultadoDiv.classList.add('alert-danger');
+            resultadoDiv.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-x-circle-fill fs-1 me-3"></i>
+                    <div>
+                        <h5 class="mb-1">Que pena!</h5>
+                        <p class="mb-0">A resposta correta era: <strong>${data.resposta_correta}</strong></p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        document.getElementById('actionButtons').classList.add('d-none');
+        document.getElementById('nextButtons').classList.remove('d-none');
+        
+        document.querySelectorAll('input').forEach(el => el.disabled = true);
+    });
+}
+
+function proximaAtividade() {
+    window.location.reload();
+}
+
+function createConfetti() {
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#fa709a', '#fee140'];
+    for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+    }
+}
+
+// Adiciona animação shake
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

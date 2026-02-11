@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard do Coordenador - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-person-badge me-2"></i>Painel do Coordenador</h2>
+        <p class="text-muted">Visão geral do sistema educacional</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card info h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-people text-info" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-1">{{ total_alunos }}</h3>
+                <p class="text-muted mb-0">Alunos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card success h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-file-earmark-text text-success" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-1">{{ total_atividades }}</h3>
+                <p class="text-muted mb-0">Atividades</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card warning h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-calendar-check text-warning" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-1">{{ atividades_hoje }}</h3>
+                <p class="text-muted mb-0">Atividades Hoje</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stat-card danger h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-star-fill text-danger" style="font-size: 2.5rem;"></i>
+                <h3 class="mt-2 mb-1">{{ total_estrelas }}</h3>
+                <p class="text-muted mb-0">Total de Estrelas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-trophy text-warning" style="font-size: 4rem;"></i>
+                <h4 class="mt-3">Ranking Completo</h4>
+                <p class="text-muted">Veja o desempenho de todos os alunos.</p>
+                <a href="{{ url_for('coordenador_ranking') }}" class="btn btn-warning">
+                    <i class="bi bi-trophy me-2"></i>Ver Ranking
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-graph-up-arrow text-info" style="font-size: 4rem;"></i>
+                <h4 class="mt-3">Relatórios</h4>
+                <p class="text-muted">Análise de desempenho por curso.</p>
+                <a href="{{ url_for('coordenador_relatorios') }}" class="btn btn-info text-white">
+                    <i class="bi bi-file-bar-graph me-2"></i>Ver Relatórios
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

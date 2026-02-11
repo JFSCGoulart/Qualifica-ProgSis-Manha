@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Ranking - EduSystem{% endblock %}
+
+{% block content %}
+<div class="page-header text-center" style="background: var(--primary-gradient); color: white; border: none;">
+    <div class="w-100">
+        <h1 class="fw-bold mb-2" style="font-size: 3rem; color: white;">
+            <i class="bi bi-trophy me-3"></i>Ranking Geral
+        </h1>
+        <p class="mb-0 opacity-75">Os melhores alunos do sistema</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        {% if ranking %}
+        <div class="card border-0 shadow-lg">
+            <div class="list-group list-group-flush">
+                {% for aluno in ranking %}
+                <div class="list-group-item p-0 {{ 'bg-primary bg-opacity-10 border-primary border-2' if aluno.nome == session.nome else '' }}">
+                    <div class="d-flex align-items-center p-4">
+                        <div class="flex-shrink-0">
+                            {% if loop.index == 1 %}
+                            <div class="position-relative">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 70px; height: 70px; background: linear-gradient(135deg, #ffd700, #ffed4e); box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5); animation: pulse-glow 2s infinite;">
+                                    <i class="bi bi-trophy-fill text-white fs-3"></i>
+                                </div>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    1º
+                                </span>
+                            </div>
+                            {% elif loop.index == 2 %}
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; background: linear-gradient(135deg, #c0c0c0, #e8e8e8); box-shadow: 0 8px 25px rgba(192, 192, 192, 0.4);">
+                                <span class="fw-bold text-white fs-4">2</span>
+                            </div>
+                            {% elif loop.index == 3 %}
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 60px; height: 60px; background: linear-gradient(135deg, #cd7f32, #daa520); box-shadow: 0 8px 25px rgba(205, 127, 50, 0.4);">
+                                <span class="fw-bold text-white fs-4">3</span>
+                            </div>
+                            {% else %}
+                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" 
+                                 style="width: 50px; height: 50px;">
+                                <span class="fw-bold text-muted fs-5">{{ loop.index }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="flex-grow-1 ms-4">
+                            <h4 class="fw-bold mb-1 {{ 'text-primary' if aluno.nome == session.nome else '' }}">
+                                {{ aluno.nome }}
+                                {% if aluno.nome == session.nome %}
+                                <span class="badge bg-primary ms-2">Você</span>
+                                {% endif %}
+                            </h4>
+                            <div class="d-flex gap-3 text-muted small">
+                                <span><i class="bi bi-check-circle me-1"></i>{{ aluno.atividades }} atividades</span>
+                                <span><i class="bi bi-bullseye me-1"></i>{{ aluno.acertos }} acertos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-shrink-0 text-end">
+                            <div class="display-6 fw-bold text-warning">
+                                {{ aluno.estrelas }} <i class="bi bi-star-fill fs-3"></i>
+                            </div>
+                            <small class="text-muted">estrelas</small>
+                        </div>
+                    </div>
+                    
+                    {% if loop.index == 1 %}
+                    <div class="px-4 pb-3">
+                        <div class="alert alert-warning bg-opacity-25 border-0 mb-0">
+                            <i class="bi bi-crown-fill me-2"></i>
+                            <strong>Líder do ranking!</strong> Este aluno está no topo da classificação.
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-trophy"></i>
+            </div>
+            <h4>Ranking vazio</h4>
+            <p>Seja o primeiro a conquistar estrelas!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

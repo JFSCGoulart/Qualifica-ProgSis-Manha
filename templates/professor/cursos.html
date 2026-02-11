@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Meus Cursos - EduSystem{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title"><i class="bi bi-journal-text me-3"></i>Meus Cursos</h1>
+        <p class="text-muted mb-0">Gerencie seus conteúdos educacionais</p>
+    </div>
+    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#modalCurso">
+        <i class="bi bi-plus-lg me-2"></i>Novo Curso
+    </button>
+</div>
+
+<div class="row g-4">
+    {% for curso in cursos %}
+    <div class="col-md-6 col-xl-4">
+        <div class="card h-100 border-0 overflow-hidden">
+            <div class="card-header bg-primary bg-opacity-10 border-0 p-4">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 60px; height: 60px;">
+                        <i class="bi bi-book text-primary fs-3"></i>
+                    </div>
+                    <div class="dropdown">
+                        <button class="action-btn" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg" style="border-radius: 12px;">
+                            <li>
+                                <a class="dropdown-item py-2" href="#" onclick="editarCurso('{{ curso.id }}', '{{ curso.nome }}', '{{ curso.descricao or '' }}')">
+                                    <i class="bi bi-pencil text-warning me-2"></i>Editar
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item py-2 text-danger" href="#" onclick="confirmarExclusao('{{ curso.id }}', '{{ curso.nome }}')">
+                                    <i class="bi bi-trash me-2"></i>Excluir
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <h4 class="fw-bold mb-2">{{ curso.nome }}</h4>
+                <p class="text-muted small mb-3">
+                    <i class="bi bi-calendar3 me-1"></i> Criado em {{ curso.data_criacao[:10] }}
+                </p>
+                {% if curso.descricao %}
+                <p class="text-muted mb-3">{{ curso.descricao }}</p>
+                {% endif %}
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>{{ curso.total_atividades }} atividades
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="bi bi-journal-plus"></i>
+            </div>
+            <h4>Você ainda não criou nenhum curso</h4>
+            <p class="text-muted">Clique em "Novo Curso" para começar a ensinar!</p>
+            <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalCurso">
+                <i class="bi bi-plus-lg me-2"></i>Criar Primeiro Curso
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modais permanecem funcionais com o mesmo JavaScript -->
+<div class="modal fade" id="modalCurso" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Novo Curso</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="acao" value="criar">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nome do Curso *</label>
+                        <input type="text" class="form-control form-control-lg" name="nome" required placeholder="Ex: Matemática Básica">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Descrição</label>
+                        <textarea class="form-control" name="descricao" rows="3" placeholder="Descreva o conteúdo do curso..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-lg"><i class="bi bi-check-lg me-2"></i>Criar Curso</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarCurso" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-warning text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-pencil me-2"></i>Editar Curso</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="acao" value="editar">
+                <input type="hidden" name="curso_id" id="editCursoId">
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Nome do Curso *</label>
+                        <input type="text" class="form-control form-control-lg" name="nome" id="editCursoNome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Descrição</label>
+                        <textarea class="form-control" name="descricao" id="editCursoDescricao" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning btn-lg text-white"><i class="bi bi-check-lg me-2"></i>Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalExcluirCurso" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0">
+            <div class="modal-header bg-danger text-white border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <input type="hidden" name="acao" value="excluir">
+                <input type="hidden" name="curso_id" id="deleteCursoId">
+                <div class="modal-body p-4 text-center">
+                    <i class="bi bi-trash text-danger" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3 mb-2">Tem certeza?</h4>
+                    <p class="text-muted">Você está prestes a excluir o curso <strong id="deleteCursoNome" class="text-dark"></strong>.</p>
+                    <div class="alert alert-warning bg-opacity-25 border-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Cursos com atividades vinculadas não podem ser excluídos.
+                    </div>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pt-0">
+                    <button type="button" class="btn btn-light btn-lg" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger btn-lg"><i class="bi bi-trash me-2"></i>Sim, Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editarCurso(id, nome, descricao) {
+    document.getElementById('editCursoId').value = id;
+    document.getElementById('editCursoNome').value = nome;
+    document.getElementById('editCursoDescricao').value = descricao;
+    new bootstrap.Modal(document.getElementById('modalEditarCurso')).show();
+}
+
+function confirmarExclusao(id, nome) {
+    document.getElementById('deleteCursoId').value = id;
+    document.getElementById('deleteCursoNome').textContent = nome;
+    new bootstrap.Modal(document.getElementById('modalExcluirCurso')).show();
+}
+</script>
+{% endblock %}

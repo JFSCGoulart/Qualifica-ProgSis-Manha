@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Atividades - EduSystem{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="bi bi-file-earmark-text me-2"></i>Minhas Atividades</h2>
+        <p class="text-muted">Gerencie apenas as atividades que você criou</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalAtividade">
+            <i class="bi bi-plus-lg me-2"></i>Nova Atividade
+        </button>
+    </div>
+</div>
+
+{% if not cursos %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>Atenção:</strong> Você precisa criar um curso antes de adicionar atividades.
+    <a href="{{ url_for('professor_cursos') }}" class="alert-link">Clique aqui para criar um curso.</a>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Tipo</th>
+                    <th>Curso</th>
+                    <th>Pergunta</th>
+                    <th>Resposta</th>
+                    <th>Data</th>
+                    <th width="100">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for atv in atividades %}
+                <tr>
+                    <td>
+                        <span class="activity-type-badge">
+                            {{ atv.tipo.replace('_', ' ').title() }}
+                        </span>
+                    </td>
+                    <td><span class="badge bg-secondary">{{ atv.curso_nome }}</span></td>
+                    <td>{{ atv.pergunta[:50] }}{% if atv.pergunta|length > 50 %}...{% endif %}</td>
+                    <td><code class="small">{{ atv.resposta_correta }}</code></td>
+                    <td class="text-muted small">{{ atv.data_criacao[:10] }}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" onclick="editarAtividade('{{ atv.id }}', '{{ atv.curso_id }}', '{{ atv.tipo }}', '{{ atv.pergunta|replace("'", "\\'") }}', '{{ atv.opcoes or '' }}', '{{ atv.resposta_correta }}', '{{ atv.dica or '' }}')" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="confirmarExclusaoAtividade('{{ atv.id }}', '{{ atv.pergunta[:30] }}')" title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                        <p class="mt-3">Você ainda não criou nenhuma atividade.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Nova Atividade -->
+<div class="modal fade" id="modalAtividade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="acao" value="criar">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nova Atividade</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-select" name="curso_id" required {% if not cursos %}disabled{% endif %}>
+                                <option value="">Selecione...</option>
+                                {% for curso in cursos %}
+                                <option value="{{ curso.id }}">{{ curso.nome }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if not cursos %}
+                            <div class="form-text text-danger">Crie um curso primeiro!</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo *</label>
+                            <select class="form-select" name="tipo" id="tipoAtividade" required onchange="toggleOpcoes('campoOpcoes', 'tipoAtividade')">
+                                {% for valor, label in tipos %}
+                                <option value="{{ valor }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Pergunta / Enunciado *</label>
+                        <textarea class="form-control" name="pergunta" rows="3" required placeholder="Digite a pergunta ou enunciado da atividade..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3" id="campoOpcoes">
+                        <label class="form-label">Opções (separadas por |)</label>
+                        <input type="text" class="form-control" name="opcoes" placeholder="Ex: Opção A|Opção B|Opção C|Opção D">
+                        <div class="form-text">Obrigatório para Múltipla Escolha, Escolha Múltipla e Correspondência</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Resposta Correta *</label>
+                        <input type="text" class="form-control" name="resposta" required placeholder="Digite a resposta correta...">
+                        <div class="form-text">Para múltipla escolha, digite o texto exato da opção correta.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dica (opcional)</label>
+                        <input type="text" class="form-control" name="dica" placeholder="Uma dica para ajudar os alunos...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success" {% if not cursos %}disabled{% endif %}>
+                        <i class="bi bi-check me-2"></i>Criar Atividade
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Editar Atividade -->
+<div class="modal fade" id="modalEditarAtividade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="acao" value="editar">
+                <input type="hidden" name="atividade_id" id="editAtvId">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Editar Atividade</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Curso *</label>
+                            <select class="form-select" name="curso_id" id="editAtvCurso" required>
+                                {% for curso in cursos %}
+                                <option value="{{ curso.id }}">{{ curso.nome }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Tipo *</label>
+                            <select class="form-select" name="tipo" id="editAtvTipo" required onchange="toggleOpcoes('editCampoOpcoes', 'editAtvTipo')">
+                                {% for valor, label in tipos %}
+                                <option value="{{ valor }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Pergunta / Enunciado *</label>
+                        <textarea class="form-control" name="pergunta" id="editAtvPergunta" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3" id="editCampoOpcoes">
+                        <label class="form-label">Opções (separadas por |)</label>
+                        <input type="text" class="form-control" name="opcoes" id="editAtvOpcoes">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Resposta Correta *</label>
+                        <input type="text" class="form-control" name="resposta" id="editAtvResposta" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Dica</label>
+                        <input type="text" class="form-control" name="dica" id="editAtvDica">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-check me-2"></i>Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirmar Exclusão -->
+<div class="modal fade" id="modalExcluirAtividade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <input type="hidden" name="acao" value="excluir">
+                <input type="hidden" name="atividade_id" id="deleteAtvId">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2"></i>Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir a atividade:</p>
+                    <p class="fw-bold text-danger" id="deleteAtvPergunta"></p>
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Esta ação não pode ser desfeita. O histórico de respostas dos alunos também será removido.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-2"></i>Sim, Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleOpcoes(campoId, selectId) {
+    const tipo = document.getElementById(selectId).value;
+    const campo = document.getElementById(campoId);
+    const tiposComOpcoes = ['multipla_escolha', 'escolha_multipla', 'correspondencia'];
+    
+    if (tiposComOpcoes.includes(tipo)) {
+        campo.style.display = 'block';
+    } else {
+        campo.style.display = 'none';
+    }
+}
+
+function editarAtividade(id, curso_id, tipo, pergunta, opcoes, resposta, dica) {
+    document.getElementById('editAtvId').value = id;
+    document.getElementById('editAtvCurso').value = curso_id;
+    document.getElementById('editAtvTipo').value = tipo;
+    document.getElementById('editAtvPergunta').value = pergunta;
+    document.getElementById('editAtvOpcoes').value = opcoes;
+    document.getElementById('editAtvResposta').value = resposta;
+    document.getElementById('editAtvDica').value = dica;
+    
+    toggleOpcoes('editCampoOpcoes', 'editAtvTipo');
+    new bootstrap.Modal(document.getElementById('modalEditarAtividade')).show();
+}
+
+function confirmarExclusaoAtividade(id, pergunta) {
+    document.getElementById('deleteAtvId').value = id;
+    document.getElementById('deleteAtvPergunta').textContent = pergunta + '...';
+    new bootstrap.Modal(document.getElementById('modalExcluirAtividade')).show();
+}
+
+// Inicializa estado dos campos
+toggleOpcoes('campoOpcoes', 'tipoAtividade');
+</script>
+{% endblock %}

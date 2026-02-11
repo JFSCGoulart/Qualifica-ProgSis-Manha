@@ -435,6 +435,7 @@ def professor_dashboard():
     conn = conectar()
     cursor = conn.cursor()
     
+    # Apenas cursos e atividades do professor logado
     cursor.execute("""
         SELECT COUNT(*) as total FROM cursos WHERE professor_id = ?
     """, (session['user_id'],))
@@ -445,15 +446,11 @@ def professor_dashboard():
     """, (session['user_id'],))
     minhas_atividades = cursor.fetchone()['total']
     
-    cursor.execute("SELECT COUNT(*) as total FROM cursos")
-    total_cursos = cursor.fetchone()['total']
-    
     conn.close()
     
     return render_template('professor/dashboard.html',
                          meus_cursos=meus_cursos,
-                         minhas_atividades=minhas_atividades,
-                         total_cursos=total_cursos)
+                         minhas_atividades=minhas_atividades)
 
 @app.route('/professor/cursos', methods=['GET', 'POST'])
 @login_required
@@ -463,24 +460,71 @@ def professor_cursos():
     cursor = conn.cursor()
     
     if request.method == 'POST':
-        nome = request.form['nome']
-        descricao = request.form['descricao']
+        acao = request.form.get('acao')
         
-        try:
-            cursor.execute("""
-                INSERT INTO cursos (nome, descricao, professor_id) VALUES (?, ?, ?)
-            """, (nome, descricao, session['user_id']))
-            conn.commit()
-            flash('Curso adicionado com sucesso!', 'success')
-        except sqlite3.IntegrityError:
-            flash('Curso com este nome já existe!', 'danger')
+        if acao == 'criar':
+            nome = request.form['nome']
+            descricao = request.form['descricao']
+            
+            try:
+                cursor.execute("""
+                    INSERT INTO cursos (nome, descricao, professor_id) VALUES (?, ?, ?)
+                """, (nome, descricao, session['user_id']))
+                conn.commit()
+                flash('Curso adicionado com sucesso!', 'success')
+            except sqlite3.IntegrityError:
+                flash('Curso com este nome já existe!', 'danger')
+        
+        elif acao == 'editar':
+            curso_id = request.form['curso_id']
+            nome = request.form['nome']
+            descricao = request.form['descricao']
+            
+            # Verifica se o curso pertence ao professor
+            cursor.execute("SELECT professor_id FROM cursos WHERE id = ?", (curso_id,))
+            curso = cursor.fetchone()
+            
+            if curso and curso['professor_id'] == session['user_id']:
+                try:
+                    cursor.execute("""
+                        UPDATE cursos SET nome = ?, descricao = ? WHERE id = ?
+                    """, (nome, descricao, curso_id))
+                    conn.commit()
+                    flash('Curso atualizado com sucesso!', 'success')
+                except sqlite3.IntegrityError:
+                    flash('Já existe um curso com este nome!', 'danger')
+            else:
+                flash('Você não tem permissão para editar este curso!', 'danger')
+        
+        elif acao == 'excluir':
+            curso_id = request.form['curso_id']
+            
+            # Verifica se o curso pertence ao professor
+            cursor.execute("SELECT professor_id FROM cursos WHERE id = ?", (curso_id,))
+            curso = cursor.fetchone()
+            
+            if curso and curso['professor_id'] == session['user_id']:
+                # Verifica se há atividades vinculadas
+                cursor.execute("SELECT COUNT(*) as total FROM atividades WHERE curso_id = ?", (curso_id,))
+                atividades = cursor.fetchone()['total']
+                
+                if atividades > 0:
+                    flash('Não é possível excluir: curso possui atividades vinculadas!', 'danger')
+                else:
+                    cursor.execute("DELETE FROM cursos WHERE id = ?", (curso_id,))
+                    conn.commit()
+                    flash('Curso excluído com sucesso!', 'success')
+            else:
+                flash('Você não tem permissão para excluir este curso!', 'danger')
     
+    # Lista apenas os cursos do professor logado
     cursor.execute("""
         SELECT c.*, 
                (SELECT COUNT(*) FROM atividades WHERE curso_id = c.id) as total_atividades
         FROM cursos c
+        WHERE c.professor_id = ?
         ORDER BY c.nome
-    """)
+    """, (session['user_id'],))
     cursos = cursor.fetchall()
     conn.close()
     
@@ -494,30 +538,92 @@ def professor_atividades():
     cursor = conn.cursor()
     
     if request.method == 'POST':
-        curso_id = request.form['curso_id']
-        tipo = request.form['tipo']
-        pergunta = request.form['pergunta']
-        opcoes = request.form.get('opcoes', '')
-        resposta = request.form['resposta']
-        dica = request.form.get('dica', 'Sem dica disponível')
+        acao = request.form.get('acao')
         
-        cursor.execute("""
-            INSERT INTO atividades 
-            (curso_id, tipo, pergunta, opcoes, resposta_correta, dica, professor_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (curso_id, tipo, pergunta, opcoes, resposta, dica, session['user_id']))
-        conn.commit()
-        flash('Atividade adicionada com sucesso!', 'success')
+        if acao == 'criar':
+            curso_id = request.form['curso_id']
+            
+            # Verifica se o curso pertence ao professor
+            cursor.execute("SELECT professor_id FROM cursos WHERE id = ?", (curso_id,))
+            curso = cursor.fetchone()
+            
+            if curso and curso['professor_id'] == session['user_id']:
+                tipo = request.form['tipo']
+                pergunta = request.form['pergunta']
+                opcoes = request.form.get('opcoes', '')
+                resposta = request.form['resposta']
+                dica = request.form.get('dica', 'Sem dica disponível')
+                
+                cursor.execute("""
+                    INSERT INTO atividades 
+                    (curso_id, tipo, pergunta, opcoes, resposta_correta, dica, professor_id)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, (curso_id, tipo, pergunta, opcoes, resposta, dica, session['user_id']))
+                conn.commit()
+                flash('Atividade adicionada com sucesso!', 'success')
+            else:
+                flash('Você só pode adicionar atividades aos seus cursos!', 'danger')
+        
+        elif acao == 'editar':
+            atividade_id = request.form['atividade_id']
+            
+            # Verifica se a atividade pertence ao professor
+            cursor.execute("SELECT professor_id FROM atividades WHERE id = ?", (atividade_id,))
+            atividade = cursor.fetchone()
+            
+            if atividade and atividade['professor_id'] == session['user_id']:
+                curso_id = request.form['curso_id']
+                
+                # Verifica se o novo curso também pertence ao professor
+                cursor.execute("SELECT professor_id FROM cursos WHERE id = ?", (curso_id,))
+                curso = cursor.fetchone()
+                
+                if curso and curso['professor_id'] == session['user_id']:
+                    tipo = request.form['tipo']
+                    pergunta = request.form['pergunta']
+                    opcoes = request.form.get('opcoes', '')
+                    resposta = request.form['resposta']
+                    dica = request.form.get('dica', 'Sem dica disponível')
+                    
+                    cursor.execute("""
+                        UPDATE atividades 
+                        SET curso_id = ?, tipo = ?, pergunta = ?, opcoes = ?, 
+                            resposta_correta = ?, dica = ?
+                        WHERE id = ?
+                    """, (curso_id, tipo, pergunta, opcoes, resposta, dica, atividade_id))
+                    conn.commit()
+                    flash('Atividade atualizada com sucesso!', 'success')
+                else:
+                    flash('Você só pode mover atividades para seus próprios cursos!', 'danger')
+            else:
+                flash('Você não tem permissão para editar esta atividade!', 'danger')
+        
+        elif acao == 'excluir':
+            atividade_id = request.form['atividade_id']
+            
+            # Verifica se a atividade pertence ao professor
+            cursor.execute("SELECT professor_id FROM atividades WHERE id = ?", (atividade_id,))
+            atividade = cursor.fetchone()
+            
+            if atividade and atividade['professor_id'] == session['user_id']:
+                cursor.execute("DELETE FROM atividades WHERE id = ?", (atividade_id,))
+                conn.commit()
+                flash('Atividade excluída com sucesso!', 'success')
+            else:
+                flash('Você não tem permissão para excluir esta atividade!', 'danger')
     
-    cursor.execute("SELECT id, nome FROM cursos ORDER BY nome")
+    # Lista apenas os cursos do professor para o select
+    cursor.execute("SELECT id, nome FROM cursos WHERE professor_id = ? ORDER BY nome", (session['user_id'],))
     cursos = cursor.fetchall()
     
+    # Lista apenas as atividades do professor logado
     cursor.execute("""
         SELECT a.*, c.nome as curso_nome
         FROM atividades a
         JOIN cursos c ON a.curso_id = c.id
+        WHERE a.professor_id = ?
         ORDER BY a.data_criacao DESC
-    """)
+    """, (session['user_id'],))
     atividades = cursor.fetchall()
     
     conn.close()
@@ -641,8 +747,4 @@ def coordenador_relatorios():
 
 if __name__ == '__main__':
     criar_tabelas()
-    # Mude de:
-    # app.run(debug=True, port=5000)
-    
-    # Para:
     app.run(host='0.0.0.0', port=5000, debug=True)

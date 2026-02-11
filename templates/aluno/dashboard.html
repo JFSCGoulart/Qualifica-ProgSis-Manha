@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - EduSystem{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">👋 Olá, {{ session.nome }}!</h1>
+        <p class="text-muted mb-0">Continue sua jornada de aprendizado</p>
+    </div>
+    <a href="{{ url_for('aluno_atividade') }}" class="btn btn-primary btn-lg">
+        <i class="bi bi-lightning-charge me-2"></i>Continuar Estudos
+    </a>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card h-100 border-0">
+            <div class="card-body text-center">
+                <div class="stat-icon primary mx-auto">
+                    <i class="bi bi-star-fill"></i>
+                </div>
+                <div class="stat-number mb-1">{{ estrelas }}</div>
+                <p class="text-muted mb-0 fw-semibold">Estrelas Conquistadas</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card h-100 border-0">
+            <div class="card-body text-center">
+                <div class="stat-icon success mx-auto">
+                    <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="stat-number mb-1">{{ atividades_hoje }}</div>
+                <p class="text-muted mb-0 fw-semibold">Atividades Hoje</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card h-100 border-0">
+            <div class="card-body text-center">
+                <div class="stat-icon warning mx-auto">
+                    <i class="bi bi-collection"></i>
+                </div>
+                <div class="stat-number mb-1">{{ total_cursos }}</div>
+                <p class="text-muted mb-0 fw-semibold">Cursos Disponíveis</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 col-lg-3">
+        <div class="card stat-card h-100 border-0">
+            <div class="card-body text-center">
+                <div class="stat-icon danger mx-auto">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stat-number mb-1">{{ pendentes }}</div>
+                <p class="text-muted mb-0 fw-semibold">Atividades Pendentes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card h-100 border-0">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="bi bi-rocket-takeoff text-primary fs-1"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <h3 class="fw-bold mb-1">Pronto para voar mais alto?</h3>
+                        <p class="text-muted mb-0">Complete atividades e acumule estrelas para subir no ranking!</p>
+                    </div>
+                </div>
+                
+                <div class="progress-container mb-3">
+                    <div class="progress-bar-custom" style="width: {{ (100 - (pendentes / (pendentes + 1) * 100)) if pendentes > 0 else 100 }}%"></div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Progresso geral</span>
+                    <span class="fw-bold text-primary">{{ (100 - (pendentes / (pendentes + 1) * 100))|int if pendentes > 0 else 100 }}%</span>
+                </div>
+                
+                <div class="mt-4 d-flex gap-2">
+                    <a href="{{ url_for('aluno_atividade') }}" class="btn btn-primary flex-fill">
+                        <i class="bi bi-play-circle me-2"></i>Iniciar Atividade
+                    </a>
+                    <a href="{{ url_for('aluno_cursos') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-grid me-2"></i>Ver Cursos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card h-100 border-0">
+            <div class="card-header bg-transparent border-0 pt-4 pb-0 px-4">
+                <h5 class="fw-bold mb-0"><i class="bi bi-trophy text-warning me-2"></i>Top 3 Ranking</h5>
+            </div>
+            <div class="card-body p-4">
+                {% for aluno in ranking %}
+                <div class="d-flex align-items-center mb-3 p-3 rounded-3 {{ 'bg-warning bg-opacity-10' if aluno.nome == session.nome else 'bg-light' }}">
+                    <div class="flex-shrink-0">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white" 
+                             style="width: 45px; height: 45px; 
+                             background: {{ 'linear-gradient(135deg, #ffd700, #ffed4e)' if loop.index == 1 else 'linear-gradient(135deg, #c0c0c0, #e8e8e8)' if loop.index == 2 else 'linear-gradient(135deg, #cd7f32, #daa520)' if loop.index == 3 else 'var(--primary-gradient)' }};">
+                            {{ loop.index }}
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="fw-bold mb-0">{{ aluno.nome }}</h6>
+                        <small class="text-muted">{{ aluno.total_estrelas }} estrelas</small>
+                    </div>
+                    {% if aluno.nome == session.nome %}
+                    <span class="badge bg-primary">Você</span>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-trophy text-muted fs-1"></i>
+                    <p class="text-muted mt-2">Nenhum ranking ainda</p>
+                </div>
+                {% endfor %}
+                
+                <a href="{{ url_for('aluno_ranking') }}" class="btn btn-outline-primary w-100 mt-2">
+                    Ver Ranking Completo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
