@@ -1,3 +1,11 @@
+import sqlite3
+
+from redirecionamento.deflogin import hash_senha
+
+conn=sqlite3.connect("qualifica_redirecionamento.db")
+
+cursor=conn.cursor()
+
 def cadastrar_aluno():
     print("\n" + "="*40)
     print("CADASTRO DE ALUNO")
